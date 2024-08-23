@@ -102,6 +102,33 @@ public class Drivetrain extends SubsystemBase {
     return mPigeon.getPitch();
   }
 
+
+  public void drive(double xSpeed, double rSpeed, boolean turnInPlace){
+    mDifferentialDrive.curvatureDrive(xSpeed * mCurrentState.direction, -rSpeed * mCurrentState.direction, turnInPlace);
+  }
+
+
+  public void forward(double speed){
+    mFrontLeft.set(speed);
+    mFrontRight.set(speed);
+  }
+
+  
+  public void resetGyro(){
+    mPigeon.reset();
+  }
+
+
+  public Command changeState(FrontState frontState){
+    return new InstantCommand(() -> mCurrentState = frontState);
+  }
+
+  public Command changeRotateState(RotateState RotateState){
+    return new InstantCommand(() -> mCurrentRotateState = RotateState);
+  }
+
+
+
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Front Left Motor", mFrontLeft.get());
