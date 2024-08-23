@@ -26,7 +26,7 @@ public class Constants {
     }
 
     public static enum RotateState {
-      POSITVIE(1),
+      POSITVIE(1), //find out which direction is clockwise/counterclockwise
       NEGATIVE(-1);
 
       public final double direction;
@@ -44,7 +44,7 @@ public class Constants {
   }
 
     public static class RobotConstants{
-        public static double maxVoltage = 15;
+        public static double maxVoltage = 15.0;
         public static class CAN{
           public static int kFrontLeft = 1;
           public static int kBackLeft = 2;
