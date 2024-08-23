@@ -29,8 +29,8 @@ public class Drivetrain extends SubsystemBase {
   private final WPI_TalonSRX mBackLeft;
   private final WPI_TalonSRX mBackRight;
   private final WPI_PigeonIMU mPigeon;
-  
-  //private final DifferentialDrive mDifferentialDrive;
+
+  private final DifferentialDrive mDifferentialDrive;
   private FrontState mCurrentState;
   private RotateState mCurrentRotateState;
 
@@ -82,10 +82,35 @@ public class Drivetrain extends SubsystemBase {
 
     mCurrentState = FrontState.FORWARD;
     mCurrentRotateState = RotateState.POSITVIE;
+
+    mDifferentialDrive = new DifferentialDrive(mFrontLeft, mFrontRight);
+
+    //Reminder to look at current limmit again with a mentor
+    SupplyCurrentLimitConfiguration currentLimit = new SupplyCurrentLimitConfiguration(true, 30, 40, 0);
+    mFrontLeft.configSupplyCurrentLimit(currentLimit);
+    mFrontRight.configSupplyCurrentLimit(currentLimit);
+    mBackLeft.configSupplyCurrentLimit(currentLimit);
+    mBackRight.configSupplyCurrentLimit(currentLimit);
+  }
+
+
+  public Rotation2d getAngle(){
+    return mPigeon.getRotation2d().times(-1);
+  }
+
+  public double getPitch(){
+    return mPigeon.getPitch();
   }
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("Front Left Motor", mFrontLeft.get());
+    SmartDashboard.putNumber("Back Left Motor", mBackLeft.get());
+    SmartDashboard.putNumber("Front Right Motor", mFrontRight.get());
+    SmartDashboard.putNumber("Back Right Motor", mBackRight.get());
+    SmartDashboard.putNumber("Pitch", getPitch());
+    SmartDashboard.putNumber("Foward", mCurrentState.direction);
+    SmartDashboard.putNumber("Turn", mCurrentRotateState.direction);
     // This method will be called once per scheduler run
   }
 }
