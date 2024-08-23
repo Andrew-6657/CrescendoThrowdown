@@ -12,7 +12,20 @@ import edu.wpi.first.wpilibj.TimedRobot;
  * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
+
+
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+ 
+
+
 public class Robot extends TimedRobot {
+
+// Driver Controllers
+private CommandXboxController mDriver = new CommandXboxController(0);
+private CommandXboxController mOperator = new CommandXboxController(1);
+//Need to edit this once controlers are decided on
+
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.

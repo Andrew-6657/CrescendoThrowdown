@@ -98,10 +98,6 @@ public class Drivetrain extends SubsystemBase {
     return mPigeon.getRotation2d().times(-1);
   }
 
-  public double getPitch(){
-    return mPigeon.getPitch();
-  }
-
 
   public void drive(double xSpeed, double rSpeed, boolean turnInPlace){
     mDifferentialDrive.curvatureDrive(xSpeed * mCurrentState.direction, -rSpeed * mCurrentState.direction, turnInPlace);
@@ -113,7 +109,7 @@ public class Drivetrain extends SubsystemBase {
     mFrontRight.set(speed);
   }
 
-  
+
   public void resetGyro(){
     mPigeon.reset();
   }
@@ -135,7 +131,6 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("Back Left Motor", mBackLeft.get());
     SmartDashboard.putNumber("Front Right Motor", mFrontRight.get());
     SmartDashboard.putNumber("Back Right Motor", mBackRight.get());
-    SmartDashboard.putNumber("Pitch", getPitch());
     SmartDashboard.putNumber("Foward", mCurrentState.direction);
     SmartDashboard.putNumber("Turn", mCurrentRotateState.direction);
     // This method will be called once per scheduler run
