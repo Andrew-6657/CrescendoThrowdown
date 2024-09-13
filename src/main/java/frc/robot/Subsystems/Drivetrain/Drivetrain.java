@@ -1,6 +1,6 @@
 //Most of this is just copypasted from Fern's drivetrain
 
-package frc.robot.Subsystems;
+package frc.robot.Subsystems.Drivetrain;
 
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
