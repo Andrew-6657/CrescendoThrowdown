@@ -133,6 +133,5 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("Back Right Motor", mBackRight.get());
     SmartDashboard.putNumber("Foward", mCurrentState.direction);
     SmartDashboard.putNumber("Turn", mCurrentRotateState.direction);
-    // This method will be called once per scheduler run
   }
 }
