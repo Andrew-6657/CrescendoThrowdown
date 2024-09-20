@@ -9,10 +9,17 @@ import edu.wpi.first.wpilibj.TimedRobot;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
  
-
+import org.littletonrobotics.junction.LogFileUtil;
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGReader;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 public class Robot extends TimedRobot {
 
@@ -27,7 +34,31 @@ private CommandXboxController mOperator = new CommandXboxController(1);
    * initialization code.
    */
   @Override
-  public void robotInit() {}
+  public void robotInit() {
+    Logger.recordMetadata("Codebase", "6657 2024 Offseason");
+    switch (mode) {
+      case REAL:
+        Logger.addDataReceiver(new WPILOGWriter("/U")); // Log to a USB stick
+        Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+        new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
+        break;
+      case REPLAY:
+        setUseTiming(false); // Run as fast as possible
+        String logPath =
+            LogFileUtil
+                .findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
+        Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
+        Logger.addDataReceiver(
+            new WPILOGWriter(
+                LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
+        break;
+      case SIM:
+        Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+        break;
+    }
+
+    Logger.start();
+  }
 
   @Override
   public void robotPeriodic() {}

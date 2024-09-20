@@ -4,11 +4,19 @@
 
 package frc.robot.Subsystems.Shooter;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
+
+//IO Definition
+private final ShooterIO shooterIO;
+
+
   /** Creates a new Shooter. */
-  public Shooter() {}
+  public Shooter(ShooterIO shooterIO) {
+    this.shooterIO = shooterIO;
+  }
 
   @Override
   public void periodic() {
