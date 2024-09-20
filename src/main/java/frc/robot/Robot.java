@@ -4,14 +4,12 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.LoggedRobot;
 
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
  
 import org.littletonrobotics.junction.LogFileUtil;
@@ -22,7 +20,7 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
-public class Robot extends TimedRobot {
+public class Robot extends LoggedRobot {
 
 // Driver Controllers
 private CommandXboxController mDriver = new CommandXboxController(0);
