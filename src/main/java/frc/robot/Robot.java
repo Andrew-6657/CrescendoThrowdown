@@ -4,13 +4,14 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.LoggedRobot;
 
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
  
 import org.littletonrobotics.junction.LogFileUtil;
@@ -28,6 +29,14 @@ private CommandXboxController mDriver = new CommandXboxController(0);
 private CommandXboxController mOperator = new CommandXboxController(1);
 //Need to edit this once controlers are decided on
 
+
+public static enum RobotMode {
+    SIM,
+    REPLAY,
+    REAL
+  }
+
+  public static final RobotMode mode = Robot.isReal() ? RobotMode.REAL : RobotMode.SIM;
 
   /**
    * This function is run when the robot is first started up and should be used for any
