@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.RobotConstants;
 import frc.robot.Constants.DriveConstants.FrontState;//I don't know if we want to use front state / rotate state yet
 import frc.robot.Constants.DriveConstants.RotateState;
-import frc.robot.Constants.RobotConstants.CAN;
+import frc.robot.Constants.RobotConstants.CANID;
 
 public class Drivetrain extends SubsystemBase {
 
@@ -35,11 +35,11 @@ public class Drivetrain extends SubsystemBase {
   private RotateState mCurrentRotateState;
 
   public Drivetrain() {
-    mFrontLeft = new WPI_TalonSRX(CAN.kFrontLeft);
-    mFrontRight = new WPI_TalonSRX(CAN.kFrontRight);
-    mBackLeft = new WPI_TalonSRX(CAN.kBackLeft);
-    mBackRight = new WPI_TalonSRX(CAN.kBackRight);
-    mPigeon = new WPI_PigeonIMU(CAN.kPigeon);
+    mFrontLeft = new WPI_TalonSRX(CANID.kFrontLeft);
+    mFrontRight = new WPI_TalonSRX(CANID.kFrontRight);
+    mBackLeft = new WPI_TalonSRX(CANID.kBackLeft);
+    mBackRight = new WPI_TalonSRX(CANID.kBackRight);
+    mPigeon = new WPI_PigeonIMU(CANID.kPigeon);
 
     mFrontLeft.configFactoryDefault();
     mFrontRight.configFactoryDefault();

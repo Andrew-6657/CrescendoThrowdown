@@ -45,7 +45,7 @@ public class Constants {
 
     public static class RobotConstants{
         public static double maxVoltage = 15.0;
-        public static class CAN{
+        public static class CANID{
           public static int kFrontLeft = 1;
           public static int kBackLeft = 2;
           public static int kFrontRight = 3;
@@ -53,7 +53,8 @@ public class Constants {
           public static int kPigeon = 5;
           public static int kIntake = 6;
           public static int kPivot = 7;
-
+          public static int kRightFlywheel = 8;
+          public static int kLeftFlywheel = 9;
         }
     }
 
