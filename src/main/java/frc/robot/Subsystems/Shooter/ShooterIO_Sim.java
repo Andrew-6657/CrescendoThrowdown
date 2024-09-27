@@ -11,6 +11,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants;
+import frc.robot.Constants.RobotConstants.CANID;
 //import frc.robot.Constants.CodeConstants;
 //import frc.robot.Constants.OuttakeConstants;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -18,14 +19,6 @@ import org.littletonrobotics.junction.AutoLogOutput;
 
 public class ShooterIO_Sim implements ShooterIO{
     
-
-// Flywheel Motor Controllers
-TalonFX followerFlywheel = new TalonFX(Constants.RobotConstants.CANID.kRightFlywheel);
-TalonFX leaderFlywheel = new TalonFX(Constants.RobotConstants.CANID.kLeftFlywheel);
-
-
-
-
 
 
 
