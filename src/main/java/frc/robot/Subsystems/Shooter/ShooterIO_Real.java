@@ -17,8 +17,8 @@ public class ShooterIO_Real implements ShooterIO {
 
 
 // Flywheel Motor Controllers
-TalonFX followerFlywheel = new TalonFX(CANID.kRightFlywheel);
-TalonFX leaderFlywheel = new TalonFX(CANID.kLeftFlywheel);
+TalonFX rightFlywheel = new TalonFX(CANID.kRightFlywheel);
+TalonFX leftFlywheel = new TalonFX(CANID.kLeftFlywheel);
 
 
 
@@ -27,8 +27,8 @@ TalonFX leaderFlywheel = new TalonFX(CANID.kLeftFlywheel);
 @AutoLogOutput(key = "Outtake/RPM Setpoint")
 private double rpmSetpoint = 0;
 
-private VelocityVoltage flywheelSetpoint = new VelocityVoltage(0).withSlot(0);
-
+private VelocityVoltage rightWheelSetpoint = new VelocityVoltage(0).withSlot(0);
+private VelocityVoltage leftWheelSetpoint = new VelocityVoltage(0).withSlot(0);
 
 
 

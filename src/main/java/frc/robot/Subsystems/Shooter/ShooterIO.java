@@ -20,7 +20,7 @@ public interface ShooterIO {
 
   public default void updateInputs(ShooterIOInputs inputs) {}
 
-  public default void changeVelocityTarget(double velocityTarget) {}//Might want to change the variable name from "velocityTarget" to something else like "rpmTarget"
+  public default void changeVelocityTarget(double velocityTarget, double flywheelRatio) {}//Might want to change the variable name from "velocityTarget" to something else like "rpmTarget"
 
 
 }
