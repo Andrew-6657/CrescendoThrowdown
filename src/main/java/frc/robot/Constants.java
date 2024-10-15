@@ -65,11 +65,11 @@ public class Constants {
     
         //pivote contants
 
-        //kick constants (flywheal?)
+        //kick constants (flywheel?)
     
       }
     public static class ShooterConstants{
-      public static class RightFlywheel{
+      public static class RightFlywheels{
         public static final double kGearing = (2d / 1);
         
         public static final double kMinRpm = -3190;
@@ -98,7 +98,7 @@ public class Constants {
             .withKI(0)
             .withKD(0);
       }
-      public static class LeftFlywheel{
+      public static class LeftFlywheels{
         public static final double kGearing = (1d / 1); //I think that this one is a 1 to 1 ratio
         
         public static final double kMinRpm = -3190;

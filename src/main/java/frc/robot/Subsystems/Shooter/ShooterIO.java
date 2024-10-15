@@ -11,6 +11,7 @@ public interface ShooterIO {
     public double flywheelMotorVoltageR = 0.0; // Volts
     public double flywheelMotorVelocityL = 0.0; // RPM
     public double flywheelMotorVelocityR = 0.0; // RPM
+    //public FlywheelSetpoint flywheelSetpoint(0,0); 
     //public double flywheelMotorTemp = 0.0; // Celcius
     public double flywheelMotorCurrent = 0.0; // Amps
     public boolean flywheelAtSetpoint = false; // I don't think this is necessary for a flywheel, I will probably delete it later. Maybe we should change it to "targetSpeed"?
@@ -20,7 +21,7 @@ public interface ShooterIO {
 
   public default void updateInputs(ShooterIOInputs inputs) {}
 
-  public default void changeVelocityTarget(double velocityTarget, double flywheelRatio) {}//Might want to change the variable name from "velocityTarget" to something else like "rpmTarget"
+  public default void changeVelocityTarget(double leftFlywheel, double rightFlywheel) {}//Might want to change the variable name from "velocityTarget" to something else like "rpmTarget"
 
 
 }

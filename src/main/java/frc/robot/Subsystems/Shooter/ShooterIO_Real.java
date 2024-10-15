@@ -14,8 +14,8 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.RobotConstants.CANID;
-import frc.robot.Constants.ShooterConstants.LeftFlywheel;
-import frc.robot.Constants.ShooterConstants.RightFlywheel;
+import frc.robot.Constants.ShooterConstants.LeftFlywheels;
+import frc.robot.Constants.ShooterConstants.RightFlywheels;
 
 
 public class ShooterIO_Real implements ShooterIO {
@@ -61,9 +61,9 @@ public ShooterIO_Real() {
     var rightFlywheelConfigurator = rightFlywheel.getConfigurator();
     var rightFlywheelConfig = new TalonFXConfiguration();
     rightFlywheelConfig.Feedback.SensorToMechanismRatio =
-        1.0 / ShooterConstants.RightFlywheel.kGearing; // Sets default output to flywheel rotations
-    rightFlywheelConfig.Slot0 = ShooterConstants.RightFlywheel.kSlot0; // PID Constants
-    rightFlywheelConfig.CurrentLimits = ShooterConstants.RightFlywheel.kCurrentConfigs; // Current Limits
+        1.0 / ShooterConstants.RightFlywheels.kGearing; // Sets default output to flywheel rotations
+    rightFlywheelConfig.Slot0 = ShooterConstants.RightFlywheels.kSlot0; // PID Constants
+    rightFlywheelConfig.CurrentLimits = ShooterConstants.RightFlywheels.kCurrentConfigs; // Current Limits
     rightFlywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     rightFlywheelConfigurator.apply(rightFlywheelConfig);
 
