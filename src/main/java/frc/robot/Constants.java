@@ -3,6 +3,8 @@ package frc.robot;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 
+import edu.wpi.first.math.MathUtil;
+
 /** Add your docs here. */
 public class Constants {
 
@@ -68,12 +70,21 @@ public class Constants {
         //kick constants (flywheel?)
     
       }
+
+
+    class FlywheelSetPoint{ 
+      int leftRPM;
+      int rightRPM;
+      public FlywheelSetPoint(int leftFlywheel, int rightFlywheel){
+      this.leftRPM = MathUtil.clamp(leftFlywheel, -3190, 3190);//clamp values should be evaluated
+      this.rightRPM = MathUtil.clamp(rightFlywheel, -3190, 3190);
+      }
+    }
+    
     public static class ShooterConstants{
       public static class RightFlywheels{
         public static final double kGearing = (2d / 1);
         
-        public static final double kMinRpm = -3190;
-        public static final double kMaxRpm = 3190; //these need to be configured
 
         public static final double kCurrentLimit = 40;
 
@@ -100,9 +111,6 @@ public class Constants {
       }
       public static class LeftFlywheels{
         public static final double kGearing = (1d / 1); //I think that this one is a 1 to 1 ratio
-        
-        public static final double kMinRpm = -3190;
-        public static final double kMaxRpm = 3190; //these need to be configured
 
         public static final double kCurrentLimit = 40;
 
