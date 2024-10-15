@@ -70,12 +70,12 @@ public class Constants {
       }
     public static class ShooterConstants{
       public static class RightFlywheel{
-        public static final double kGearing = (1d / 2); //note, ask if this should be changed to a 2d / 1
+        public static final double kGearing = (2d / 1);
         
         public static final double kMinRpm = -3190;
         public static final double kMaxRpm = 3190; //these need to be configured
 
-        public static final double kCurrentLimit = 30;
+        public static final double kCurrentLimit = 40;
 
         public static final double kFeedRPM = 300; //these need to be configured
         public static final double kSpeakerRPM = 2950;
@@ -104,7 +104,7 @@ public class Constants {
         public static final double kMinRpm = -3190;
         public static final double kMaxRpm = 3190; //these need to be configured
 
-        public static final double kCurrentLimit = 30;
+        public static final double kCurrentLimit = 40;
 
         public static final double kFeedRPM = 300; //these need to be configured
         public static final double kSpeakerRPM = 2950;
