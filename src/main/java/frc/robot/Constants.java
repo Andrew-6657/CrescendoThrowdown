@@ -79,11 +79,19 @@ public class Constants {
       public static class FlywheelSetPoint{ 
       double leftRPM;
       double rightRPM;
+
       public FlywheelSetPoint(double leftRPM, double rightRPM){
         this.leftRPM = MathUtil.clamp(leftRPM, -6380d * LeftFlywheels.kGearing, 6380d * LeftFlywheels.kGearing);
         this.rightRPM = MathUtil.clamp(rightRPM, -6380d * RightFlywheels.kGearing, 6380d * RightFlywheels.kGearing);
       }
+
+      // public void ChangeSetPoint(double leftRPM, double rightRPM){
+      //   this.leftRPM = MathUtil.clamp(leftRPM, -6380d * LeftFlywheels.kGearing, 6380d * LeftFlywheels.kGearing);
+      //   this.rightRPM = MathUtil.clamp(rightRPM, -6380d * RightFlywheels.kGearing, 6380d * RightFlywheels.kGearing);
+      // }
     }
+
+    
 
     public static final FlywheelSetPoint kFeedRPM = new FlywheelSetPoint(300, 300); //these need to be configured
     public static final FlywheelSetPoint kSpeakerRPM = new FlywheelSetPoint(300, 300);
