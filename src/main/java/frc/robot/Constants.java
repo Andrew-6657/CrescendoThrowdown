@@ -72,25 +72,31 @@ public class Constants {
       }
 
 
-    class FlywheelSetPoint{ 
+    
+
+    public static class ShooterConstants{
+
+      public static class FlywheelSetPoint{ 
       int leftRPM;
       int rightRPM;
-      public FlywheelSetPoint(int leftFlywheel, int rightFlywheel){
-      this.leftRPM = MathUtil.clamp(leftFlywheel, -3190, 3190);//clamp values should be evaluated
-      this.rightRPM = MathUtil.clamp(rightFlywheel, -3190, 3190);
+      public FlywheelSetPoint(int leftRPM, int rightRPM){
+        this.leftRPM = MathUtil.clamp(leftRPM, -3190, 3190);//clamp values should be evaluated
+        this.rightRPM = MathUtil.clamp(rightRPM, -3190, 3190);
       }
     }
-    
-    public static class ShooterConstants{
+
+    public static final FlywheelSetPoint kFeedRPM = new FlywheelSetPoint(300, 300); //these need to be configured
+    public static final FlywheelSetPoint kSpeakerRPM = new FlywheelSetPoint(300, 300);
+    public static final FlywheelSetPoint kAmpRPM = new FlywheelSetPoint(300, 300);
+    public static final FlywheelSetPoint kIntake = new FlywheelSetPoint(-100, -100);
+
+
       public static class RightFlywheels{
         public static final double kGearing = (2d / 1);
         
 
         public static final double kCurrentLimit = 40;
 
-        public static final double kFeedRPM = 300; //these need to be configured
-        public static final double kSpeakerRPM = 2950;
-        public static final double kAmpRPM = 1000;
 
         public static final CurrentLimitsConfigs kCurrentConfigs =
         new CurrentLimitsConfigs()
@@ -114,9 +120,6 @@ public class Constants {
 
         public static final double kCurrentLimit = 40;
 
-        public static final double kFeedRPM = 300; //these need to be configured
-        public static final double kSpeakerRPM = 2950;
-        public static final double kAmpRPM = 1000;
 
         public static final CurrentLimitsConfigs kCurrentConfigs =
         new CurrentLimitsConfigs()
