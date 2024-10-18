@@ -49,7 +49,7 @@ public class Constants {
   }
 
     public static class RobotConstants{
-        public static double maxVoltage = 15.0;
+        //public static double maxVoltage = 15.0;
         public static class CANID{
           public static int kFrontLeft = 1;
           public static int kBackLeft = 2;
@@ -77,11 +77,11 @@ public class Constants {
     public static class ShooterConstants{
 
       public static class FlywheelSetPoint{ 
-      int leftRPM;
-      int rightRPM;
-      public FlywheelSetPoint(int leftRPM, int rightRPM){
-        this.leftRPM = MathUtil.clamp(leftRPM, -3190, 3190);//clamp values should be evaluated
-        this.rightRPM = MathUtil.clamp(rightRPM, -3190, 3190);
+      double leftRPM;
+      double rightRPM;
+      public FlywheelSetPoint(double leftRPM, double rightRPM){
+        this.leftRPM = MathUtil.clamp(leftRPM, -6380d * LeftFlywheels.kGearing, 6380d * LeftFlywheels.kGearing);
+        this.rightRPM = MathUtil.clamp(rightRPM, -6380d * RightFlywheels.kGearing, 6380d * RightFlywheels.kGearing);
       }
     }
 
