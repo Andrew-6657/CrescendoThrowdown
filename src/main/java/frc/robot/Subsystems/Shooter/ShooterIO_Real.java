@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants.RobotConstants.CANID;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShooterConstants.FlywheelSetPoint;
-import org.littletonrobotics.junction.AutoLogOutput;
 
 public class ShooterIO_Real implements ShooterIO {
 
@@ -17,12 +16,12 @@ public class ShooterIO_Real implements ShooterIO {
   TalonFX leftFlywheel = new TalonFX(CANID.kLeftFlywheel);
 
   // Variables to store/log the setpoints
-  @AutoLogOutput(key = "Outtake/RPM Setpoint")
   private FlywheelSetPoint flywheelSetPoint = new FlywheelSetPoint(0, 0);
 
   private VelocityVoltage rightWheelSetpoint = new VelocityVoltage(0).withSlot(0);
   private VelocityVoltage leftWheelSetpoint = new VelocityVoltage(0).withSlot(0);
 
+  //REVIEW COMMENT: This can be replaced by a LaserCAN. See: Stumpy intake
   // Chamber Beam Break Sensor
   DigitalInput beambreak = new DigitalInput(8);
 
@@ -49,14 +48,12 @@ public class ShooterIO_Real implements ShooterIO {
     leftFlywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     leftFlywheelConfigurator.apply(leftFlywheelConfig);
   }
-
+  
+  //REVIEW COMMENT: variable name should be newSetpoints
   @Override
   public void changeRPMTarget(FlywheelSetPoint Targets) {
     flywheelSetPoint = Targets;
   }
-
-  // would this make changing the set point look like "changeRPMTarget(new
-  // FlywheelSetPoint(100,200));" or "changeRPMTarget(ShooterConstants.kSpeakerRPM);" ?
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {

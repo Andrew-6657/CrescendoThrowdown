@@ -4,7 +4,6 @@ import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import edu.wpi.first.math.MathUtil;
 
-/** Add your docs here. */
 public class Constants {
 
   public static class DriveConstants {
@@ -59,6 +58,7 @@ public class Constants {
     }
   }
 
+  //REVIEW COMMENT: spelling error 
   public static class PivoteConstants {
 
     // pivote contants
