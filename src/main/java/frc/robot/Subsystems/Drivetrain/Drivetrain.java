@@ -6,11 +6,9 @@ import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -28,7 +26,6 @@ public class Drivetrain extends SubsystemBase {
   private final WPI_TalonSRX mFrontRight;
   private final WPI_TalonSRX mBackLeft;
   private final WPI_TalonSRX mBackRight;
-  private final WPI_PigeonIMU mPigeon;
 
   private final DifferentialDrive mDifferentialDrive;
   private FrontState mCurrentState;
@@ -39,7 +36,6 @@ public class Drivetrain extends SubsystemBase {
     mFrontRight = new WPI_TalonSRX(CANID.kFrontRight);
     mBackLeft = new WPI_TalonSRX(CANID.kBackLeft);
     mBackRight = new WPI_TalonSRX(CANID.kBackRight);
-    mPigeon = new WPI_PigeonIMU(CANID.kPigeon);
 
     mFrontLeft.configFactoryDefault();
     mFrontRight.configFactoryDefault();
@@ -56,10 +52,6 @@ public class Drivetrain extends SubsystemBase {
     mBackLeft.configVoltageCompSaturation(RobotConstants.maxVoltage);
     mBackRight.configVoltageCompSaturation(RobotConstants.maxVoltage);
 
-    mFrontLeft.configVoltageCompSaturation(RobotConstants.maxVoltage);
-    mFrontRight.configVoltageCompSaturation(RobotConstants.maxVoltage);
-    mBackLeft.configVoltageCompSaturation(RobotConstants.maxVoltage);
-    mBackRight.configVoltageCompSaturation(RobotConstants.maxVoltage);
 
     mFrontLeft.enableVoltageCompensation(true);
     mFrontRight.enableVoltageCompensation(true);
@@ -86,7 +78,7 @@ public class Drivetrain extends SubsystemBase {
     mDifferentialDrive = new DifferentialDrive(mFrontLeft, mFrontRight);
 
     //Reminder to look at current limmit again with a mentor
-    SupplyCurrentLimitConfiguration currentLimit = new SupplyCurrentLimitConfiguration(true, 30, 40, 0);
+    SupplyCurrentLimitConfiguration currentLimit = new SupplyCurrentLimitConfiguration(true, 40, 40, 0);
     mFrontLeft.configSupplyCurrentLimit(currentLimit);
     mFrontRight.configSupplyCurrentLimit(currentLimit);
     mBackLeft.configSupplyCurrentLimit(currentLimit);
@@ -94,13 +86,11 @@ public class Drivetrain extends SubsystemBase {
   }
 
 
-  public Rotation2d getAngle(){
-    return mPigeon.getRotation2d().times(-1);
-  }
+  
 
 
   public void drive(double xSpeed, double rSpeed, boolean turnInPlace){
-    mDifferentialDrive.curvatureDrive(xSpeed * mCurrentState.direction, -rSpeed * mCurrentState.direction, turnInPlace);
+    mDifferentialDrive.arcadeDrive(xSpeed * mCurrentState.direction, -rSpeed * mCurrentState.direction, false);
   }
 
 
@@ -110,9 +100,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
 
-  public void resetGyro(){
-    mPigeon.reset();
-  }
+  
 
 
   public Command changeState(FrontState frontState){

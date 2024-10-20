@@ -49,7 +49,7 @@ public class Constants {
   }
 
     public static class RobotConstants{
-        //public static double maxVoltage = 15.0;
+        public static double maxVoltage = 12.0;
         public static class CANID{
           public static int kFrontLeft = 1;
           public static int kBackLeft = 2;
