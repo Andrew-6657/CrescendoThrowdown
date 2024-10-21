@@ -57,20 +57,24 @@ public class ShooterIO_Real implements ShooterIO {
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    // public double flywheelMotorVoltageL = 0.0; // Volts
-    // public double flywheelMotorVoltageR = 0.0; // Volts
 
-    // public double flywheelVelocityL = 0.0; // RPM
-    // public double flywheelVelocityR = 0.0; // RPM
+inputs.flywheelMotorVoltageL = leftFlywheel.getMotorVoltage().getValueAsDouble(); // Volts    
+inputs.flywheelMotorVoltageR = rightFlywheel.getMotorVoltage().getValueAsDouble(); // Volts
 
-    // public FlywheelSetPoint flywheelSetPoint = new FlywheelSetPoint(0,0);
-    // public boolean flywheelAtSetPointL = false;
-    // public boolean flywheelAtSetPointR = false;
+inputs.flywheelMotorCurrentL = leftFlywheel.getSupplyCurrent().getValueAsDouble(); // Amps
+inputs.flywheelMotorCurrentR = rightFlywheel.getSupplyCurrent().getValueAsDouble(); // Amps
 
-    // public double flywheelMotorCurrentL = 0.0; // Amps
-    // public double flywheelMotorCurrentR = 0.0; // Amps
+inputs.flywheelSetPoint = flywheelSetPoint;
 
-    // public double TOF_Distance = 0;
-    // this coresponds to the autologged inputs
+inputs.flywheelVelocityL = leftFlywheel.getVelocity().getValueAsDouble() * 60; // RPM
+inputs.flywheelVelocityR = rightFlywheel.getVelocity().getValueAsDouble() * 60; // RPM
+
+inputs.flywheelAtSetPointL = (leftFlywheel.getVelocity().getValueAsDouble() * 60) == flywheelSetPoint.leftRPM;
+inputs.flywheelAtSetPointR = (rightFlywheel.getVelocity().getValueAsDouble() * 60) == flywheelSetPoint.rightRPM;
+
+
+/* 
+    public double TOF_Distance = 0;
+    */
   }
 }

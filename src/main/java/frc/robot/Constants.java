@@ -70,8 +70,8 @@ public class Constants {
 
     public static class FlywheelSetPoint {
 
-      double leftRPM = 0;
-      double rightRPM = 0;
+      public double leftRPM = 0;
+      public double rightRPM = 0;
 
       public FlywheelSetPoint(double leftRPM, double rightRPM) {
         this.leftRPM =
@@ -82,6 +82,7 @@ public class Constants {
                 rightRPM, -6380d * RightFlywheels.kGearing, 6380d * RightFlywheels.kGearing);
       }
     }
+
 
     public static final FlywheelSetPoint kFeedRPM =
         new FlywheelSetPoint(300, 300); // these need to be configured
