@@ -46,11 +46,10 @@ public class Constants {
     public static double maxVoltage = 12.0;
 
     public static class CANID {
-      public static int kFrontLeft = 1;
+      public static int kFrontLeft = 1; 
       public static int kBackLeft = 2;
       public static int kFrontRight = 3;
       public static int kBackRight = 4;
-      public static int kPigeon = 5;
       public static int kIntake = 6;
       public static int kPivot = 7;
       public static int kRightFlywheel = 8;
@@ -58,7 +57,7 @@ public class Constants {
     }
   }
 
-  //REVIEW COMMENT: spelling error 
+  // REVIEW COMMENT: spelling error
   public static class PivoteConstants {
 
     // pivote contants

@@ -21,7 +21,7 @@ public class ShooterIO_Real implements ShooterIO {
   private VelocityVoltage rightWheelSetpoint = new VelocityVoltage(0).withSlot(0);
   private VelocityVoltage leftWheelSetpoint = new VelocityVoltage(0).withSlot(0);
 
-  //REVIEW COMMENT: This can be replaced by a LaserCAN. See: Stumpy intake
+  // REVIEW COMMENT: This can be replaced by a LaserCAN. See: Stumpy intake
   // Chamber Beam Break Sensor
   DigitalInput beambreak = new DigitalInput(8);
 
@@ -48,8 +48,8 @@ public class ShooterIO_Real implements ShooterIO {
     leftFlywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     leftFlywheelConfigurator.apply(leftFlywheelConfig);
   }
-  
-  //REVIEW COMMENT: variable name should be newSetpoints
+
+  // REVIEW COMMENT: variable name should be newSetpoints
   @Override
   public void changeRPMTarget(FlywheelSetPoint Targets) {
     flywheelSetPoint = Targets;

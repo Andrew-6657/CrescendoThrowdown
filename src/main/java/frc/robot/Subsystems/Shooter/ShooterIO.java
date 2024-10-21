@@ -13,8 +13,8 @@ public interface ShooterIO {
     public double flywheelVelocityL = 0.0; // RPM
     public double flywheelVelocityR = 0.0; // RPM
 
-    public double leftFlywheelSetPoint = 0.0; //RPM
-    public double rightFlywheelSetPoint = 0.0; //RPM
+    public double leftFlywheelSetPoint = 0.0; // RPM
+    public double rightFlywheelSetPoint = 0.0; // RPM
 
     public boolean flywheelAtSetPointL = false;
     public boolean flywheelAtSetPointR = false;

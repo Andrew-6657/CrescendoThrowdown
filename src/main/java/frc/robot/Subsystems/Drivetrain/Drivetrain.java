@@ -55,17 +55,18 @@ public class Drivetrain extends SubsystemBase {
     mBackRight.setNeutralMode(NeutralMode.Brake);
 
     mFrontLeft.setInverted(InvertType.None);
-    mBackLeft.setInverted(InvertType.None); //REVIEW COMMENT: This should follow master
+    mBackLeft.setInverted(InvertType.None); // REVIEW COMMENT: This should follow master
     mFrontRight.setInverted(InvertType.InvertMotorOutput);
-    mBackRight.setInverted(InvertType.InvertMotorOutput); //REVIEW COMMENT: This should follow master
+    mBackRight.setInverted(
+        InvertType.InvertMotorOutput); // REVIEW COMMENT: This should follow master
 
-    //REVIEW COMMENT: I dont think we need these states
+    // REVIEW COMMENT: I dont think we need these states
     mCurrentState = FrontState.FORWARD;
     mCurrentRotateState = RotateState.POSITVIE;
 
     mDifferentialDrive = new DifferentialDrive(mFrontLeft, mFrontRight);
 
-    //REVIEW COMMENT: Reminder to look at current limmit again with a mentor
+    // REVIEW COMMENT: Reminder to look at current limmit again with a mentor
     SupplyCurrentLimitConfiguration currentLimit =
         new SupplyCurrentLimitConfiguration(true, 40, 40, 0);
     mFrontLeft.configSupplyCurrentLimit(currentLimit);
@@ -79,7 +80,7 @@ public class Drivetrain extends SubsystemBase {
         xSpeed * mCurrentState.direction, -rSpeed * mCurrentState.direction, false);
   }
 
-  //REVIEW COMMENT: Not sure what this is for
+  // REVIEW COMMENT: Not sure what this is for
   public void forward(double speed) {
     mFrontLeft.set(speed);
     mFrontRight.set(speed);
@@ -95,7 +96,7 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    //REVIEW COMMENT: These should be logged instead. Use Logger.recordOutput()
+    // REVIEW COMMENT: These should be logged instead. Use Logger.recordOutput()
     SmartDashboard.putNumber("Front Left Motor", mFrontLeft.get());
     SmartDashboard.putNumber("Back Left Motor", mBackLeft.get());
     SmartDashboard.putNumber("Front Right Motor", mFrontRight.get());
