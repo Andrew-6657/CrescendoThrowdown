@@ -22,14 +22,16 @@ import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.RobotConstants.CANID;
 
 public class Pivot extends SubsystemBase {
-  /** Creates a new Pivot. */
+
+  private double pivotSetpoint = 0; //This should be private, we dont want anything changing it outside of the changeSetpoint method.
+
+  private TalonFX pivotMotor = new TalonFX(CANID.kPivot); 
+  //Private since nothing else should be able to mess with the motor. This should also be WPI_TalonSRX and there is a left and right one. One should inversely follow the other.
+
+  private DutyCycleEncoder pivotEncoder = new DutyCycleEncoder(0); //Most things up here should be private since hardware should be kept within the subsystem and not messed with from outside.
+  
   public Pivot() {
-
-    double pivotSetpoint = 0;
-
-    // Pivot Motor Controller
-    TalonFX pivotMotor = new TalonFX(CANID.kPivot);
-
+    //This whole next block probably need modified since were not using a talonFX.
     var pivotConfigurator = pivotMotor.getConfigurator();
         var pivotConfigs = new TalonFXConfiguration();
         pivotConfigs.Feedback.SensorToMechanismRatio =
@@ -40,16 +42,20 @@ public class Pivot extends SubsystemBase {
         pivotConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         pivotConfigurator.apply(pivotConfigs);    
 
-    DutyCycleEncoder pivotEncoder = new DutyCycleEncoder(0);
     pivotEncoder.setPositionOffset(PivotConstants.posOffset);
+
+    //Make a method to return this value instead. Having it here doesnt really do anything
     double pivotEncoderValue = pivotEncoder.getAbsolutePosition()-pivotEncoder.getPositionOffset();
 
   }
 
-private PIDController pivotePID = new PIDController(0, 0, 0);
+  //This is good just put it up at the top of the file above the constuctor with the rest of the stuff.
+  private PIDController pivotePID = new PIDController(0, 0, 0);
 
   @Override
   public void periodic() {
     double output = pivotePID.calculate(pivotEncoder.getAbsolutePosition, pivoteSetpoint);
+
+    //Set motor powers here
   }
 }
