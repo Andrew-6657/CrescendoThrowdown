@@ -6,7 +6,11 @@
 
 package frc.robot.Subsystems.Pivot;
 
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import java.util.function.Supplier;
 
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -15,9 +19,11 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 //import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PivotConstants;
+import frc.robot.Constants.VisionFrame;
 import frc.robot.Constants.RobotConstants.CANID;
 
 public class Pivot extends SubsystemBase {
@@ -31,6 +37,8 @@ public class Pivot extends SubsystemBase {
   private WPI_TalonSRX pivotMotorL = new WPI_TalonSRX(CANID.kPivotL); 
   private WPI_TalonSRX pivotMotorR = new WPI_TalonSRX(CANID.kPivotR); 
   //This should also be WPI_TalonSRX and there is a left and right one. One should inversely follow the other.
+
+  private InterpolatingDoubleTreeMap pivotMap;
 
   public Pivot() {
 
@@ -58,8 +66,18 @@ public class Pivot extends SubsystemBase {
 
   }
 
-  public void changeSetpoint(double setPoint) {
-    pivotSetpoint = MathUtil.clamp(setPoint, PivotConstants.minimumPosition, PivotConstants.maximumPosition);
+  public Command changeSetpoint(double setPoint) {
+    //pivotSetpoint = MathUtil.clamp(setPoint, PivotConstants.minimumPosition, PivotConstants.maximumPosition);
+    return Commands.runOnce(()->{
+      pivotSetpoint = MathUtil.clamp(setPoint, PivotConstants.minimumPosition, PivotConstants.maximumPosition);
+    }, this);
+  }
+
+  public Command setPivotAngleFromVision(Supplier<VisionFrame> visionFrameSupplier){
+    return Commands.run(() -> {
+      VisionFrame visionFrame = visionFrameSupplier.get();
+      pivotSetpoint = (visionFrame.hasTarget) ? pivotMap.get(visionFrame.tY) : 0;
+    });
   }
 
   public double readEncoderValue(){
