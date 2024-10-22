@@ -76,10 +76,6 @@ public class Constants {
             .withKI(0)
             .withKD(0);
 
-    public static MotionMagicConfigs kPivotMotionMagicConfig =
-        new MotionMagicConfigs()
-            .withMotionMagicCruiseVelocity(Units.degreesToRotations(600))
-            .withMotionMagicAcceleration(Units.degreesToRotations(800));
 
     public static final CurrentLimitsConfigs kPivotCurrentConfigs =
         new CurrentLimitsConfigs()

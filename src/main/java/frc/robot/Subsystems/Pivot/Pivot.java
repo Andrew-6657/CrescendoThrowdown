@@ -33,7 +33,6 @@ public class Pivot extends SubsystemBase {
             1.0 / PivotConstants.kGearing; // Sets default output to pivot rotations
         pivotConfigs.Slot0 = PivotConstants.kSlot0; // PID Constants
         pivotConfigs.CurrentLimits = PivotConstants.kPivotCurrentConfigs; // Current Limits
-        pivotConfigs.MotionMagic = PivotConstants.kPivotMotionMagicConfig; // Motion Magic Constants
         pivotConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         pivotConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         pivotConfigurator.apply(pivotConfigs);    
