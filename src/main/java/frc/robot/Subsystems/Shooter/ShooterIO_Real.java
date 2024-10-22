@@ -1,11 +1,10 @@
 package frc.robot.Subsystems.Shooter;
 
+import au.grapplerobotics.LaserCan;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
-import au.grapplerobotics.LaserCan;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants.RobotConstants.CANID;
@@ -26,7 +25,6 @@ public class ShooterIO_Real implements ShooterIO {
 
   private VelocityVoltage leftWheelSetpoint = new VelocityVoltage(0).withSlot(0);
   private VelocityVoltage rightWheelSetpoint = new VelocityVoltage(0).withSlot(0);
-  
 
   // REVIEW COMMENT: This can be replaced by a LaserCAN. See: Stumpy intake
   // Chamber Beam Break Sensor
@@ -65,30 +63,32 @@ public class ShooterIO_Real implements ShooterIO {
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
 
-inputs.flywheelMotorVoltageL = leftFlywheel.getMotorVoltage().getValueAsDouble(); // Volts    
-inputs.flywheelMotorVoltageR = rightFlywheel.getMotorVoltage().getValueAsDouble(); // Volts
+    inputs.flywheelMotorVoltageL = leftFlywheel.getMotorVoltage().getValueAsDouble(); // Volts
+    inputs.flywheelMotorVoltageR = rightFlywheel.getMotorVoltage().getValueAsDouble(); // Volts
 
-inputs.flywheelMotorCurrentL = leftFlywheel.getSupplyCurrent().getValueAsDouble(); // Amps
-inputs.flywheelMotorCurrentR = rightFlywheel.getSupplyCurrent().getValueAsDouble(); // Amps
+    inputs.flywheelMotorCurrentL = leftFlywheel.getSupplyCurrent().getValueAsDouble(); // Amps
+    inputs.flywheelMotorCurrentR = rightFlywheel.getSupplyCurrent().getValueAsDouble(); // Amps
 
-inputs.flywheelSetPoint = flywheelSetPoint;
+    inputs.flywheelSetPoint = flywheelSetPoint;
 
-inputs.flywheelVelocityL = leftFlywheel.getVelocity().getValueAsDouble() * 60; // RPM
-inputs.flywheelVelocityR = rightFlywheel.getVelocity().getValueAsDouble() * 60; // RPM
+    inputs.flywheelVelocityL = leftFlywheel.getVelocity().getValueAsDouble() * 60; // RPM
+    inputs.flywheelVelocityR = rightFlywheel.getVelocity().getValueAsDouble() * 60; // RPM
 
-inputs.flywheelAtSetPointL = (leftFlywheel.getVelocity().getValueAsDouble() * 60) == flywheelSetPoint.leftRPM;
-inputs.flywheelAtSetPointR = (rightFlywheel.getVelocity().getValueAsDouble() * 60) == flywheelSetPoint.rightRPM;
+    inputs.flywheelAtSetPointL =
+        (leftFlywheel.getVelocity().getValueAsDouble() * 60) == flywheelSetPoint.leftRPM;
+    inputs.flywheelAtSetPointR =
+        (rightFlywheel.getVelocity().getValueAsDouble() * 60) == flywheelSetPoint.rightRPM;
 
-leftFlywheel.setControl(
+    leftFlywheel.setControl(
         leftWheelSetpoint
             .withVelocity(flywheelSetPoint.leftRPM / 60)
             .withSlot(0)); // RPM to Native Rotations per second
 
-rightFlywheel.setControl(
+    rightFlywheel.setControl(
         rightWheelSetpoint
             .withVelocity(flywheelSetPoint.rightRPM / 60)
             .withSlot(0)); // RPM to Native Rotations per second
 
-inputs.TOF_Distance = Units.metersToInches(sensor.getMeasurement().distance_mm * 0.001);
+    inputs.TOF_Distance = Units.metersToInches(sensor.getMeasurement().distance_mm * 0.001);
   }
 }
