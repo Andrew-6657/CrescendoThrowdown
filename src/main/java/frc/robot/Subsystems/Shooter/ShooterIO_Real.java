@@ -71,18 +71,22 @@ public class ShooterIO_Real implements ShooterIO {
 
     inputs.flywheelSetPoint = flywheelSetPoint;
 
-    double leftVelocity = leftFlywheel.getVelocity().getValueAsDouble() * 60; //RPM
-    double rightVelocity = rightFlywheel.getVelocity().getValueAsDouble() * 60; //RPM
+    double leftVelocity = leftFlywheel.getVelocity().getValueAsDouble() * 60; // RPM
+    double rightVelocity = rightFlywheel.getVelocity().getValueAsDouble() * 60; // RPM
 
     inputs.flywheelVelocityL = leftVelocity; // RPM
     inputs.flywheelVelocityR = rightVelocity; // RPM
 
     inputs.flywheelAtSetPointL =
-        leftVelocity > flywheelSetPoint.leftRPM * (1 - ShooterConstants.LeftFlywheels.setPointTolerance) 
-        && leftVelocity < flywheelSetPoint.leftRPM * (1 + ShooterConstants.LeftFlywheels.setPointTolerance);
+        leftVelocity
+                > flywheelSetPoint.leftRPM - ShooterConstants.LeftFlywheels.setPointTolerance
+            && leftVelocity
+                < flywheelSetPoint.leftRPM - ShooterConstants.LeftFlywheels.setPointTolerance;
     inputs.flywheelAtSetPointR =
-        rightVelocity > flywheelSetPoint.rightRPM * (1 - ShooterConstants.RightFlywheels.setPointTolerance) 
-        && rightVelocity < flywheelSetPoint.rightRPM * (1 + ShooterConstants.RightFlywheels.setPointTolerance);
+        rightVelocity
+                > flywheelSetPoint.rightRPM - ShooterConstants.RightFlywheels.setPointTolerance
+            && rightVelocity
+                < flywheelSetPoint.rightRPM - ShooterConstants.RightFlywheels.setPointTolerance;
 
     leftFlywheel.setControl(
         leftWheelSetpoint
