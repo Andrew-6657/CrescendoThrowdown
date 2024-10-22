@@ -1,8 +1,10 @@
 package frc.robot;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.util.Units;
 
 public class Constants {
 
@@ -58,12 +60,35 @@ public class Constants {
     }
   }
 
-  // REVIEW COMMENT: spelling error
-  public static class PivoteConstants {
+  public static class PivotConstants {
 
-    // pivote contants
+    public static final double kPivotCurrentLimit = 30; // needs to be tuned
 
-    // kick constants (flywheel?)
+    public static final double posOffset = 0.1;
+
+    public static final double kGearing = 1d/(7 * 5 * 8);
+    
+    public static Slot0Configs kSlot0 = // These need to be tuned
+        new Slot0Configs()
+            .withKS(0)
+            .withKV(12d / ((6380d / 60) * kGearing)) // Volts/Mechanism RPS
+            .withKP(150)
+            .withKI(0)
+            .withKD(0);
+
+    public static MotionMagicConfigs kPivotMotionMagicConfig =
+        new MotionMagicConfigs()
+            .withMotionMagicCruiseVelocity(Units.degreesToRotations(600))
+            .withMotionMagicAcceleration(Units.degreesToRotations(800));
+
+    public static final CurrentLimitsConfigs kPivotCurrentConfigs =
+        new CurrentLimitsConfigs()
+            .withStatorCurrentLimit(kPivotCurrentLimit)
+            .withSupplyCurrentLimit(kPivotCurrentLimit)
+            .withStatorCurrentLimitEnable(true)
+            .withSupplyCurrentLimitEnable(true)
+            .withSupplyCurrentThreshold(kPivotCurrentLimit)
+            .withSupplyTimeThreshold(0);
 
   }
 

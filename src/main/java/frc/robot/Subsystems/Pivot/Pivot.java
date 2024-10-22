@@ -8,9 +8,41 @@ package frc.robot.Subsystems.Pivot;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import frc.robot.Constants.PivotConstants;
+import frc.robot.Constants.RobotConstants.CANID;
+
 public class Pivot extends SubsystemBase {
   /** Creates a new Pivot. */
-  public Pivot() {}
+  public Pivot() {
+
+    // Pivot Motor Controller
+    TalonFX pivotMotor = new TalonFX(CANID.kPivot);
+
+    var pivotConfigurator = pivotMotor.getConfigurator();
+        var pivotConfigs = new TalonFXConfiguration();
+        pivotConfigs.Feedback.SensorToMechanismRatio =
+            1.0 / PivotConstants.kGearing; // Sets default output to pivot rotations
+        pivotConfigs.Slot0 = PivotConstants.kSlot0; // PID Constants
+        pivotConfigs.CurrentLimits = PivotConstants.kPivotCurrentConfigs; // Current Limits
+        pivotConfigs.MotionMagic = PivotConstants.kPivotMotionMagicConfig; // Motion Magic Constants
+        pivotConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        pivotConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        pivotConfigurator.apply(pivotConfigs);    
+
+    DutyCycleEncoder pivotEncoder = new DutyCycleEncoder(0);
+    pivotEncoder.setPositionOffset(PivotConstants.posOffset);
+    double pivotEncoderValue = pivotEncoder.getAbsolutePosition()-pivotEncoder.getPositionOffset();
+
+  }
 
   @Override
   public void periodic() {
