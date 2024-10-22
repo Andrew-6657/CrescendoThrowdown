@@ -52,10 +52,11 @@ public class Constants {
       public static int kFrontRight = 3;
       public static int kBackRight = 4;
       public static int kIntake = 6;
-      public static int kPivot = 7;
-      public static int kRightFlywheel = 8;
-      public static int kLeftFlywheel = 9;
-      public static int kIntakeTOF = 10;
+      public static int kPivotL = 7;
+      public static int kPivotR = 8;
+      public static int kRightFlywheel = 9;
+      public static int kLeftFlywheel = 10;
+      public static int kIntakeTOF = 11;
     }
   }
 
