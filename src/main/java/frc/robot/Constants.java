@@ -75,12 +75,12 @@ public class Constants {
 
   public static class PivotConstants {
 
-    public static final double kPivotCurrentLimit = 30; // needs to be tuned
+    public static final double kPivotCurrentLimit = 30;
 
     public static final double posOffset = 0.1;
 
-    public static final double minimumPosition = 0;//need to be calculated
-    public static final double maximumPosition = 9870;
+    public static final double minimumPosition = 0;
+    public static final double maximumPosition = 104;
 
     public static final double kGearing = 1d / (7 * 5 * 8);
 

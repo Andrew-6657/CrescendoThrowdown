@@ -12,17 +12,13 @@ import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+//import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.RobotConstants.CANID;
-import frc.robot.Constants.ShooterConstants.FlywheelSetPoint;
 
 public class Pivot extends SubsystemBase {
 
@@ -44,12 +40,12 @@ public class Pivot extends SubsystemBase {
     pivotMotorL.setNeutralMode(NeutralMode.Brake);
     pivotMotorL.configVoltageCompSaturation(10); //tune later
     pivotMotorL.enableVoltageCompensation(true);
-    pivotMotorL.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30, 30, 0)); //ask Andy or someone what triggerThresholdCurrent does
+    pivotMotorL.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30, 30, 0));
 
     pivotMotorR.setNeutralMode(NeutralMode.Brake);
     pivotMotorR.configVoltageCompSaturation(10); //tune later
     pivotMotorR.enableVoltageCompensation(true);
-    pivotMotorR.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30, 30, 0)); //ask Andy or someone what triggerThresholdCurrent does
+    pivotMotorR.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30, 30, 0));
 
     pivotMotorL.follow(pivotMotorR);
 
@@ -63,18 +59,19 @@ public class Pivot extends SubsystemBase {
   }
 
   public void changeSetpoint(double setPoint) {
-    pivotSetpoint = MathUtil.clamp(setPoint, PivotConstants.minimumPosition, PivotConstants.maximumPosition);//the min and max need to be calculated
+    pivotSetpoint = MathUtil.clamp(setPoint, PivotConstants.minimumPosition, PivotConstants.maximumPosition);
   }
 
   public double readEncoderValue(){
-    //return pivotEncoder.getAbsolutePosition()-pivotEncoder.getPositionOffset();
-    return .0;
+    return pivotEncoder.getAbsolutePosition()-pivotEncoder.getPositionOffset();
+    //return .0;
   }
 
   @Override
   public void periodic() {
-    //double output = pivotPID.calculate(pivotEncoder.getAbsolutePosition, pivoteSetpoint);
+    double output = pivotPID.calculate(readEncoderValue(), pivotSetpoint);
 
     // Set motor powers here
+    pivotMotorR.setVoltage(output);
   }
 }
