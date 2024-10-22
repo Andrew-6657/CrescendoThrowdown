@@ -82,6 +82,8 @@ public class Constants {
     public static final double minimumPosition = 0;
     public static final double maximumPosition = 104;
 
+    public static final double setPointTolerance = 0.02;//percentage
+
     public static final double kGearing = 1d / (7 * 5 * 8);
 
     public static Slot0Configs kSlot0 = // These need to be tuned

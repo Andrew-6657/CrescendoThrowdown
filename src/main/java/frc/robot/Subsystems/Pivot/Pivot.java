@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import java.util.function.Supplier;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
@@ -32,7 +34,7 @@ public class Pivot extends SubsystemBase {
 
   private DutyCycleEncoder pivotEncoder = new DutyCycleEncoder(0);
 
-  private double pivotSetpoint = 0; //This should be private, we dont want anything changing it outside of the changeSetpoint method.
+  private double pivotSetPoint = 0; //This should be private, we dont want anything changing it outside of the changeSetpoint method.
 
   private WPI_TalonSRX pivotMotorL = new WPI_TalonSRX(CANID.kPivotL); 
   private WPI_TalonSRX pivotMotorR = new WPI_TalonSRX(CANID.kPivotR); 
@@ -69,14 +71,14 @@ public class Pivot extends SubsystemBase {
   public Command changeSetpoint(double setPoint) {
     //pivotSetpoint = MathUtil.clamp(setPoint, PivotConstants.minimumPosition, PivotConstants.maximumPosition);
     return Commands.runOnce(()->{
-      pivotSetpoint = MathUtil.clamp(setPoint, PivotConstants.minimumPosition, PivotConstants.maximumPosition);
+      pivotSetPoint = MathUtil.clamp(setPoint, PivotConstants.minimumPosition, PivotConstants.maximumPosition);
     }, this);
   }
 
   public Command setPivotAngleFromVision(Supplier<VisionFrame> visionFrameSupplier){
     return Commands.run(() -> {
       VisionFrame visionFrame = visionFrameSupplier.get();
-      pivotSetpoint = (visionFrame.hasTarget) ? pivotMap.get(visionFrame.tY) : 0;
+      pivotSetPoint = (visionFrame.hasTarget) ? pivotMap.get(visionFrame.tY) : 0;
     });
   }
 
@@ -87,9 +89,15 @@ public class Pivot extends SubsystemBase {
 
   @Override
   public void periodic() {
-    double output = pivotPID.calculate(readEncoderValue(), pivotSetpoint);
-
-    // Set motor powers here
+    double output = pivotPID.calculate(readEncoderValue(), pivotSetPoint);
     pivotMotorR.setVoltage(output);
+
+    Logger.recordOutput("Pivot/Output", output);
+    Logger.recordOutput("Pivot/Set Point", pivotSetPoint);
+
+    double encoderValue = readEncoderValue();
+
+    Logger.recordOutput("Pivot/Encoder ", encoderValue);
+    Logger.recordOutput("Pivot/At Set Point", encoderValue > pivotSetPoint*(1 - PivotConstants.setPointTolerance) && encoderValue < pivotSetPoint*(1 + PivotConstants.setPointTolerance));
   }
 }
