@@ -14,6 +14,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -23,6 +24,8 @@ import frc.robot.Constants.RobotConstants.CANID;
 public class Pivot extends SubsystemBase {
   /** Creates a new Pivot. */
   public Pivot() {
+
+    double pivotSetpoint = 0;
 
     // Pivot Motor Controller
     TalonFX pivotMotor = new TalonFX(CANID.kPivot);
@@ -43,8 +46,10 @@ public class Pivot extends SubsystemBase {
 
   }
 
+private PIDController pivotePID = new PIDController(0, 0, 0);
+
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    double output = pivotePID.calculate(pivotEncoder.getAbsolutePosition, pivoteSetpoint);
   }
 }
