@@ -6,26 +6,28 @@
 
 package frc.robot.Subsystems.Pivot;
 
-<<<<<<< HEAD
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-=======
->>>>>>> 8757b985cbbab9752e1e4166233735b60238c514
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.RobotConstants.CANID;
+import frc.robot.Constants.ShooterConstants.FlywheelSetPoint;
 
 public class Pivot extends SubsystemBase {
 
-  private PIDController pivotePID = new PIDController(0, 0, 0);
+  private PIDController pivotPID = new PIDController(0, 0, 0);
+
+  private DutyCycleEncoder pivotEncoder = new DutyCycleEncoder(0);
 
   private double pivotSetpoint = 0; //This should be private, we dont want anything changing it outside of the changeSetpoint method.
 
@@ -34,19 +36,25 @@ public class Pivot extends SubsystemBase {
   //This should also be WPI_TalonSRX and there is a left and right one. One should inversely follow the other.
 
   public Pivot() {
-    //This whole next block probably need modified since were not using a talonFX.
-    /* 
-    var pivotConfigurator = pivotMotorL.getConfigurator();
-        var pivotConfigs = new TalonFXConfiguration();
-        pivotConfigs.Feedback.SensorToMechanismRatio =
-            1.0 / PivotConstants.kGearing; // Sets default output to pivot rotations
-        pivotConfigs.Slot0 = PivotConstants.kSlot0; // PID Constants
-        pivotConfigs.CurrentLimits = PivotConstants.kPivotCurrentConfigs; // Current Limits
-        pivotConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        pivotConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        pivotConfigurator.apply(pivotConfigs);    */
 
-    //var pivotConfigurator = pivotMotorL.
+    pivotMotorL.configFactoryDefault();
+    pivotMotorR.configFactoryDefault();
+
+    pivotMotorL.setNeutralMode(NeutralMode.Brake);
+    pivotMotorL.configVoltageCompSaturation(10); //tune later
+    pivotMotorL.enableVoltageCompensation(true);
+    pivotMotorL.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30, 30, 0)); //ask Andy or someone what triggerThresholdCurrent does
+
+    pivotMotorR.setNeutralMode(NeutralMode.Brake);
+    pivotMotorR.configVoltageCompSaturation(10); //tune later
+    pivotMotorR.enableVoltageCompensation(true);
+    pivotMotorR.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30, 30, 0)); //ask Andy or someone what triggerThresholdCurrent does
+
+    pivotMotorL.setInverted(false);
+    pivotMotorR.setInverted(true);
+
+    pivotMotorL.follow(pivotMotorR);
+
 
     pivotEncoder.setPositionOffset(PivotConstants.posOffset);
 
@@ -54,8 +62,13 @@ public class Pivot extends SubsystemBase {
 
   }
 
+  public void changeSetpoint(double setPoint) {
+    pivotSetpoint = MathUtil.clamp(setPoint, PivotConstants.minimumPosition, PivotConstants.maximumPosition);//the min and max need to be calculated
+  }
+
   public double readEncoderValue(){
-    return pivotEncoder.getAbsolutePosition()-pivotEncoder.getPositionOffset();
+    //return pivotEncoder.getAbsolutePosition()-pivotEncoder.getPositionOffset();
+    return .0;
   }
 
   @Override

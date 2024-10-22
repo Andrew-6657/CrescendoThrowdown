@@ -79,6 +79,9 @@ public class Constants {
 
     public static final double posOffset = 0.1;
 
+    public static final double minimumPosition = 0;//need to be calculated
+    public static final double maximumPosition = 9870;
+
     public static final double kGearing = 1d / (7 * 5 * 8);
 
     public static Slot0Configs kSlot0 = // These need to be tuned
