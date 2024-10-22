@@ -6,6 +6,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import au.grapplerobotics.LaserCan;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants.RobotConstants.CANID;
 import frc.robot.Constants.ShooterConstants;
@@ -23,8 +24,9 @@ public class ShooterIO_Real implements ShooterIO {
   // Variables to store/log the setpoints
   private FlywheelSetPoint flywheelSetPoint = new FlywheelSetPoint(0, 0);
 
-  private VelocityVoltage rightWheelSetpoint = new VelocityVoltage(0).withSlot(0);
   private VelocityVoltage leftWheelSetpoint = new VelocityVoltage(0).withSlot(0);
+  private VelocityVoltage rightWheelSetpoint = new VelocityVoltage(0).withSlot(0);
+  
 
   // REVIEW COMMENT: This can be replaced by a LaserCAN. See: Stumpy intake
   // Chamber Beam Break Sensor
@@ -77,9 +79,16 @@ inputs.flywheelVelocityR = rightFlywheel.getVelocity().getValueAsDouble() * 60; 
 inputs.flywheelAtSetPointL = (leftFlywheel.getVelocity().getValueAsDouble() * 60) == flywheelSetPoint.leftRPM;
 inputs.flywheelAtSetPointR = (rightFlywheel.getVelocity().getValueAsDouble() * 60) == flywheelSetPoint.rightRPM;
 
+leftFlywheel.setControl(
+        leftWheelSetpoint
+            .withVelocity(flywheelSetPoint.leftRPM / 60)
+            .withSlot(0)); // RPM to Native Rotations per second
 
-/* 
-    public double TOF_Distance = 0;
-    */
+rightFlywheel.setControl(
+        rightWheelSetpoint
+            .withVelocity(flywheelSetPoint.rightRPM / 60)
+            .withSlot(0)); // RPM to Native Rotations per second
+
+inputs.TOF_Distance = Units.metersToInches(sensor.getMeasurement().distance_mm * 0.001);
   }
 }

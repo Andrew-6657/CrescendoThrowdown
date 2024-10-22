@@ -21,7 +21,7 @@ public interface ShooterIO {
     public double flywheelMotorCurrentL = 0.0; // Amps
     public double flywheelMotorCurrentR = 0.0; // Amps
 
-    public double TOF_Distance = 0;
+    public double TOF_Distance = 0; // Inches
   }
 
   public default void updateInputs(ShooterIOInputs inputs) {}
