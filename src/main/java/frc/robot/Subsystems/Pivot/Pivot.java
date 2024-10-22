@@ -8,6 +8,7 @@ package frc.robot.Subsystems.Pivot;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -50,11 +51,10 @@ public class Pivot extends SubsystemBase {
     pivotMotorR.enableVoltageCompensation(true);
     pivotMotorR.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30, 30, 0)); //ask Andy or someone what triggerThresholdCurrent does
 
-    pivotMotorL.setInverted(false);
-    pivotMotorR.setInverted(true);
-
     pivotMotorL.follow(pivotMotorR);
 
+    pivotMotorL.setInverted(InvertType.OpposeMaster);
+    pivotMotorR.setInverted(InvertType.InvertMotorOutput);
 
     pivotEncoder.setPositionOffset(PivotConstants.posOffset);
 
@@ -73,7 +73,7 @@ public class Pivot extends SubsystemBase {
 
   @Override
   public void periodic() {
-    //double output = pivotePID.calculate(pivotEncoder.getAbsolutePosition, pivoteSetpoint);
+    //double output = pivotPID.calculate(pivotEncoder.getAbsolutePosition, pivoteSetpoint);
 
     // Set motor powers here
   }
