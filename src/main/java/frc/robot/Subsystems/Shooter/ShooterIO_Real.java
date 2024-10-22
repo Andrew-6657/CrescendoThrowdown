@@ -4,12 +4,17 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import au.grapplerobotics.LaserCan;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants.RobotConstants.CANID;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShooterConstants.FlywheelSetPoint;
 
 public class ShooterIO_Real implements ShooterIO {
+
+  // Intake TOF Sensor
+  LaserCan sensor = new LaserCan(CANID.kIntakeTOF);
 
   // Flywheel Motor Controllers
   TalonFX rightFlywheel = new TalonFX(CANID.kRightFlywheel);

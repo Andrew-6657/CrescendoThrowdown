@@ -54,6 +54,7 @@ public class Constants {
       public static int kPivot = 7;
       public static int kRightFlywheel = 8;
       public static int kLeftFlywheel = 9;
+      public static int kIntakeTOF = 10;
     }
   }
 
