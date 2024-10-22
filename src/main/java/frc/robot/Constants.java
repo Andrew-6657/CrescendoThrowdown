@@ -3,9 +3,22 @@ package frc.robot;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import edu.wpi.first.math.MathUtil;
-//import edu.wpi.first.math.util.Units;
+
+// import edu.wpi.first.math.util.Units;
 
 public class Constants {
+
+  public static class VisionFrame {
+    public double tX = 0;
+    public double tY = 0;
+    public boolean hasTarget = false;
+
+    public VisionFrame(double tX, double tY, boolean hasTarget) {
+      this.tX = tX;
+      this.tY = tY;
+      this.hasTarget = hasTarget;
+    }
+  }
 
   public static class DriveConstants {
     public static double kTurboForwardSpeed = 1.0;
@@ -47,7 +60,7 @@ public class Constants {
     public static double maxVoltage = 12.0;
 
     public static class CANID {
-      public static int kFrontLeft = 1; 
+      public static int kFrontLeft = 1;
       public static int kBackLeft = 2;
       public static int kFrontRight = 3;
       public static int kBackRight = 4;
@@ -65,8 +78,8 @@ public class Constants {
 
     public static final double posOffset = 0.1;
 
-    public static final double kGearing = 1d/(7 * 5 * 8);
-    
+    public static final double kGearing = 1d / (7 * 5 * 8);
+
     public static Slot0Configs kSlot0 = // These need to be tuned
         new Slot0Configs()
             .withKS(0)
@@ -74,7 +87,6 @@ public class Constants {
             .withKP(150)
             .withKI(0)
             .withKD(0);
-
 
     public static final CurrentLimitsConfigs kPivotCurrentConfigs =
         new CurrentLimitsConfigs()
@@ -84,7 +96,6 @@ public class Constants {
             .withSupplyCurrentLimitEnable(true)
             .withSupplyCurrentThreshold(kPivotCurrentLimit)
             .withSupplyTimeThreshold(0);
-
   }
 
   public static class ShooterConstants {
@@ -103,7 +114,6 @@ public class Constants {
                 rightRPM, -6380d * RightFlywheels.kGearing, 6380d * RightFlywheels.kGearing);
       }
     }
-
 
     public static final FlywheelSetPoint kFeedRPM =
         new FlywheelSetPoint(300, 300); // these need to be configured
