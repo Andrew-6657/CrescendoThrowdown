@@ -71,13 +71,18 @@ public class ShooterIO_Real implements ShooterIO {
 
     inputs.flywheelSetPoint = flywheelSetPoint;
 
-    inputs.flywheelVelocityL = leftFlywheel.getVelocity().getValueAsDouble() * 60; // RPM
-    inputs.flywheelVelocityR = rightFlywheel.getVelocity().getValueAsDouble() * 60; // RPM
+    double leftVelocity = leftFlywheel.getVelocity().getValueAsDouble() * 60; //RPM
+    double rightVelocity = rightFlywheel.getVelocity().getValueAsDouble() * 60; //RPM
+
+    inputs.flywheelVelocityL = leftVelocity; // RPM
+    inputs.flywheelVelocityR = rightVelocity; // RPM
 
     inputs.flywheelAtSetPointL =
-        (leftFlywheel.getVelocity().getValueAsDouble() * 60) == flywheelSetPoint.leftRPM;
+        leftVelocity > flywheelSetPoint.leftRPM * (1 - ShooterConstants.LeftFlywheels.setPointTolerance) 
+        && leftVelocity < flywheelSetPoint.leftRPM * (1 + ShooterConstants.LeftFlywheels.setPointTolerance);
     inputs.flywheelAtSetPointR =
-        (rightFlywheel.getVelocity().getValueAsDouble() * 60) == flywheelSetPoint.rightRPM;
+        rightVelocity > flywheelSetPoint.rightRPM * (1 - ShooterConstants.RightFlywheels.setPointTolerance) 
+        && rightVelocity < flywheelSetPoint.rightRPM * (1 + ShooterConstants.RightFlywheels.setPointTolerance);
 
     leftFlywheel.setControl(
         leftWheelSetpoint

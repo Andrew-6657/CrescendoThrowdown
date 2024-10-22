@@ -132,6 +132,8 @@ public class Constants {
 
       public static final double kCurrentLimit = 40;
 
+      public static final double setPointTolerance = 0.02;//percentage
+
       public static final CurrentLimitsConfigs kCurrentConfigs =
           new CurrentLimitsConfigs()
               .withStatorCurrentLimit(kCurrentLimit * 2)
@@ -154,6 +156,8 @@ public class Constants {
       public static final double kGearing = (1d / 1); // I think that this one is a 1 to 1 ratio
 
       public static final double kCurrentLimit = 40;
+
+      public static final double setPointTolerance = 0.02;//percentage
 
       public static final CurrentLimitsConfigs kCurrentConfigs =
           new CurrentLimitsConfigs()
