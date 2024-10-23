@@ -5,11 +5,9 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
-import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.RobotConstants.CANID;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShooterConstants.FlywheelSetPoint;
@@ -63,11 +61,16 @@ public class ShooterIO_Real implements ShooterIO {
     flywheelSetPoint = Targets;
   }
 
-  public boolean flywheelsAtSetPoint(){
-    return MathUtil.isNear(flywheelSetPoint.leftRPM, leftFlywheel.getVelocity().getValueAsDouble() * 60, ShooterConstants.LeftFlywheels.setPointTolerance) 
-    && MathUtil.isNear(flywheelSetPoint.rightRPM, rightFlywheel.getVelocity().getValueAsDouble() * 60, ShooterConstants.RightFlywheels.setPointTolerance);
+  public boolean flywheelsAtSetPoint() {
+    return MathUtil.isNear(
+            flywheelSetPoint.leftRPM,
+            leftFlywheel.getVelocity().getValueAsDouble() * 60,
+            ShooterConstants.LeftFlywheels.setPointTolerance)
+        && MathUtil.isNear(
+            flywheelSetPoint.rightRPM,
+            rightFlywheel.getVelocity().getValueAsDouble() * 60,
+            ShooterConstants.RightFlywheels.setPointTolerance);
   }
-
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
@@ -78,7 +81,8 @@ public class ShooterIO_Real implements ShooterIO {
     inputs.flywheelMotorCurrentL = leftFlywheel.getSupplyCurrent().getValueAsDouble(); // Amps
     inputs.flywheelMotorCurrentR = rightFlywheel.getSupplyCurrent().getValueAsDouble(); // Amps
 
-    inputs.flywheelSetPoint = flywheelSetPoint;
+    inputs.flywheelSetPointL = flywheelSetPoint.leftRPM;
+    inputs.flywheelSetPointR = flywheelSetPoint.rightRPM;
 
     double leftVelocity = leftFlywheel.getVelocity().getValueAsDouble() * 60; // RPM
     double rightVelocity = rightFlywheel.getVelocity().getValueAsDouble() * 60; // RPM
@@ -86,8 +90,16 @@ public class ShooterIO_Real implements ShooterIO {
     inputs.flywheelVelocityL = leftVelocity; // RPM
     inputs.flywheelVelocityR = rightVelocity; // RPM
 
-    inputs.flywheelAtSetPointL = MathUtil.isNear(flywheelSetPoint.leftRPM, leftFlywheel.getVelocity().getValueAsDouble() * 60, ShooterConstants.LeftFlywheels.setPointTolerance);
-    inputs.flywheelAtSetPointR = MathUtil.isNear(flywheelSetPoint.rightRPM, rightFlywheel.getVelocity().getValueAsDouble() * 60, ShooterConstants.RightFlywheels.setPointTolerance);
+    inputs.flywheelAtSetPointL =
+        MathUtil.isNear(
+            flywheelSetPoint.leftRPM,
+            leftFlywheel.getVelocity().getValueAsDouble() * 60,
+            ShooterConstants.LeftFlywheels.setPointTolerance);
+    inputs.flywheelAtSetPointR =
+        MathUtil.isNear(
+            flywheelSetPoint.rightRPM,
+            rightFlywheel.getVelocity().getValueAsDouble() * 60,
+            ShooterConstants.RightFlywheels.setPointTolerance);
 
     leftFlywheel.setControl(
         leftWheelSetpoint

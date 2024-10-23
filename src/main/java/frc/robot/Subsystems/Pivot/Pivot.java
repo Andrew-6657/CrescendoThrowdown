@@ -88,7 +88,7 @@ public class Pivot extends SubsystemBase {
     return pivotEncoder.getAbsolutePosition() - pivotEncoder.getPositionOffset();
   }
 
-  public boolean pivotAtSetPoint(){
+  public boolean pivotAtSetPoint() {
     return MathUtil.isNear(pivotSetPoint, readEncoderValue(), PivotConstants.setPointTolerance);
   }
 
