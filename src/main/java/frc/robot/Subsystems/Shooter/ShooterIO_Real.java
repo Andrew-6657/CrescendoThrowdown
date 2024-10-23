@@ -55,9 +55,8 @@ public class ShooterIO_Real implements ShooterIO {
     leftFlywheelConfigurator.apply(leftFlywheelConfig);
   }
 
-  // REVIEW COMMENT: variable name should be newSetpoints
   @Override
-  public void changeRPMTarget(FlywheelSetPoint Targets) {
+  public void newSetpoints(FlywheelSetPoint Targets) {
     flywheelSetPoint = Targets;
   }
 

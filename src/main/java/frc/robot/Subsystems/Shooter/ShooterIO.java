@@ -27,5 +27,5 @@ public interface ShooterIO {
 
   public default void updateInputs(ShooterIOInputs inputs) {}
 
-  public default void changeRPMTarget(FlywheelSetPoint Targets) {}
+  public default void newSetpoints(FlywheelSetPoint Targets) {}
 }
