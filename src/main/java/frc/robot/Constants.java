@@ -82,7 +82,7 @@ public class Constants {
     public static final double minimumPosition = 0;
     public static final double maximumPosition = 104;
 
-    public static final double setPointTolerance = 1.0;//degrees
+    public static final double setPointTolerance = 1.0; // degrees
 
     public static final double kGearing = 1d / (7 * 5 * 8);
 
@@ -132,7 +132,7 @@ public class Constants {
 
       public static final double kCurrentLimit = 40;
 
-      public static final double setPointTolerance = 2.0;//rpm
+      public static final double setPointTolerance = 2.0; // rpm
 
       public static final CurrentLimitsConfigs kCurrentConfigs =
           new CurrentLimitsConfigs()
@@ -157,7 +157,7 @@ public class Constants {
 
       public static final double kCurrentLimit = 40;
 
-      public static final double setPointTolerance = 2.0;//rmp
+      public static final double setPointTolerance = 2.0; // rmp
 
       public static final CurrentLimitsConfigs kCurrentConfigs =
           new CurrentLimitsConfigs()

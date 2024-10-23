@@ -86,7 +86,10 @@ public class Pivot extends SubsystemBase {
 
   public double readEncoderValue() {
     return pivotEncoder.getAbsolutePosition() - pivotEncoder.getPositionOffset();
-    // return .0;
+  }
+
+  public boolean pivotAtSetPoint(){
+    return MathUtil.isNear(pivotSetPoint, readEncoderValue(), PivotConstants.setPointTolerance);
   }
 
   @Override
@@ -97,12 +100,7 @@ public class Pivot extends SubsystemBase {
     Logger.recordOutput("Pivot/Output", output);
     Logger.recordOutput("Pivot/Set Point", pivotSetPoint);
 
-    double encoderValue = readEncoderValue();
-
-    Logger.recordOutput("Pivot/Encoder ", encoderValue);
-    Logger.recordOutput(
-        "Pivot/At Set Point",
-        encoderValue > pivotSetPoint * (1 - PivotConstants.setPointTolerance)
-            && encoderValue < pivotSetPoint * (1 + PivotConstants.setPointTolerance));
+    Logger.recordOutput("Pivot/Encoder ", readEncoderValue());
+    Logger.recordOutput("Pivot/At Set Point", pivotAtSetPoint());
   }
 }
