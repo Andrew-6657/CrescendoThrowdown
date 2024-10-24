@@ -116,8 +116,14 @@ public class Drivetrain extends SubsystemBase {
 
   private PIDController allignPID = new PIDController(0, 0, 0);
 
-  boolean allignmentInTolerance;
-  boolean vellocityInTolerance;
+  
+
+  public boolean drivetrainAlligned(Supplier<VisionFrame> visionFrameSupplier){
+    VisionFrame visionFrame = visionFrameSupplier.get();
+    boolean allignmentInTolerance = MathUtil.isNear(0, visionFrame.tX, 120); //tolerance needs tuning
+    boolean vellocityInTolerance = MathUtil.isNear(0, mPigeon.getRate(), 5); //tollercance needs tuning
+    return allignmentInTolerance && vellocityInTolerance;
+  }
 
   public Command allignDrivetrainFromVision(Supplier<VisionFrame> visionFrameSupplier) {
     return Commands.run(
@@ -125,13 +131,10 @@ public class Drivetrain extends SubsystemBase {
           VisionFrame visionFrame = visionFrameSupplier.get();
           double output = allignPID.calculate(visionFrame.tX,0);
 
-          allignmentInTolerance = MathUtil.isNear(0, visionFrame.tX, 120); //tolerance needs tuning
-          vellocityInTolerance = MathUtil.isNear(output, mPigeon.getRate(), 5); //tollercance needs tuning
-
-          if(allignmentInTolerance && vellocityInTolerance){
-            drive(0, output);
+          if(drivetrainAlligned(visionFrameSupplier)){
+            drive(0, 0);
           } else {
-            drive(0,0);
+            drive(0, output);
           }
         });
   }
