@@ -126,7 +126,7 @@ public class Drivetrain extends SubsystemBase {
           double output = allignPID.calculate(visionFrame.tX,0);
 
           allignmentInTolerance = MathUtil.isNear(0, visionFrame.tX, 120); //tolerance needs tuning
-          vellocityInTolerance = MathUtil.isNear(output, mPigeon.getRate(), 5) || MathUtil.isNear(0, mPigeon.getRate(), 10); //tollercance needs tuning
+          vellocityInTolerance = MathUtil.isNear(output, mPigeon.getRate(), 5); //tollercance needs tuning
 
           if(allignmentInTolerance && vellocityInTolerance){
             drive(0, output);
