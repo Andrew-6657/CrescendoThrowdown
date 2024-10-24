@@ -116,12 +116,13 @@ public class Drivetrain extends SubsystemBase {
 
   private PIDController allignPID = new PIDController(0, 0, 0);
 
-  
+  boolean allignmentInTolerance;
+  boolean vellocityInTolerance;
 
   public boolean drivetrainAlligned(Supplier<VisionFrame> visionFrameSupplier){
     VisionFrame visionFrame = visionFrameSupplier.get();
-    boolean allignmentInTolerance = MathUtil.isNear(0, visionFrame.tX, 120); //tolerance needs tuning
-    boolean vellocityInTolerance = MathUtil.isNear(0, mPigeon.getRate(), 5); //tollercance needs tuning
+    allignmentInTolerance = MathUtil.isNear(0, visionFrame.tX, 120); //tolerance needs tuning
+    vellocityInTolerance = MathUtil.isNear(0, mPigeon.getRate(), 5); //tollercance needs tuning
     return allignmentInTolerance && vellocityInTolerance;
   }
 
@@ -147,5 +148,7 @@ public class Drivetrain extends SubsystemBase {
     Logger.recordOutput("Back Right Motor", mBackRight.get());
     Logger.recordOutput("Foward", mCurrentState.direction);
     Logger.recordOutput("Turn", mCurrentRotateState.direction);
+    Logger.recordOutput("Allignment in Tollerance", allignmentInTolerance);
+    Logger.recordOutput("Velocity in Tollerance", vellocityInTolerance);
   }
 }
