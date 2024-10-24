@@ -62,6 +62,9 @@ public class Pivot extends SubsystemBase {
     pivotMotorR.setInverted(InvertType.InvertMotorOutput);
 
     pivotEncoder.setPositionOffset(PivotConstants.posOffset);
+
+
+    //pivotMap.put(0d, 0d);
   }
 
   public Command changeSetpoint(double setPoint) {

@@ -7,6 +7,7 @@ package frc.robot.Subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants.FlywheelSetPoint;
+import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
 
@@ -32,6 +33,7 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    shooterIO.updateInputs(shooterInputs);
+    Logger.processInputs("Shooter", shooterInputs);
   }
 }

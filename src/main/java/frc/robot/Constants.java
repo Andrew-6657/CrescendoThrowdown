@@ -70,6 +70,7 @@ public class Constants {
       public static int kRightFlywheel = 9;
       public static int kLeftFlywheel = 10;
       public static int kIntakeTOF = 11;
+      public static int kPigeon = 12;
     }
   }
 
