@@ -79,14 +79,16 @@ public class Pivot extends SubsystemBase {
       });
   }
 
+  /* 
   public Command freezeSetpoint(){
     return Commands.run(
       () -> {
         changeSetpoint(readEncoderValue());
       }
     );
-  } //this should change the setpoint to wherever the pivot already is so the pivot will stop moving
+  } //this should change the setpoint to wherever the pivot already is so the pivot will stop moving */
 
+   
   public Command setPivotAngleFromVision(Supplier<VisionFrame> visionFrameSupplier) {
     return Commands.run(
         () -> {
@@ -94,6 +96,7 @@ public class Pivot extends SubsystemBase {
           pivotSetPoint = (visionFrame.hasTarget) ? pivotMap.get(visionFrame.tY) : 0;
         });
   }
+  
 
   public double readEncoderValue() {
     return pivotEncoder.getAbsolutePosition() - pivotEncoder.getPositionOffset();

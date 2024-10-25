@@ -76,11 +76,11 @@ public class Robot extends LoggedRobot {
 
     operator.a().onTrue(pivot.changeSetpoint(0)); //bring the pivot down to zero
 
-    operator.leftBumper().onTrue(pivot.relativeChangeSetpoint(-0.3)); //reduce hight of pivot manualy
-    operator.leftBumper().onFalse(pivot.freezeSetpoint());
+    operator.povDown().onTrue(pivot.relativeChangeSetpoint(-0.3)); //reduce hight of pivot manualy
+    //operator.().onFalse(pivot.freezeSetpoint());
 
-    operator.rightBumper().onTrue(pivot.relativeChangeSetpoint(0.3)); //increase hight of pivot manualy
-    operator.rightBumper().onFalse(pivot.freezeSetpoint());
+    operator.povUp().onTrue(pivot.relativeChangeSetpoint(0.3)); //increase hight of pivot manualy
+    //operator.().onFalse(pivot.freezeSetpoint());
 
     operator.b().onTrue(shooter.changeFlywheelSetpoint(ShooterConstants.kFreeze)); //disable movement of the flywheels
   }
