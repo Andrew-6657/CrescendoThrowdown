@@ -30,14 +30,10 @@ public class Pivot extends SubsystemBase {
 
   private DutyCycleEncoder pivotEncoder = new DutyCycleEncoder(0);
 
-  private double pivotSetPoint =
-      0; // This should be private, we dont want anything changing it outside of the changeSetpoint
-  // method.
+  private double pivotSetPoint = 0;
 
   private WPI_TalonSRX pivotMotorL = new WPI_TalonSRX(CANID.kPivotL);
   private WPI_TalonSRX pivotMotorR = new WPI_TalonSRX(CANID.kPivotR);
-  // This should also be WPI_TalonSRX and there is a left and right one. One should inversely follow
-  // the other.
 
   private InterpolatingDoubleTreeMap pivotMap;
 
@@ -67,8 +63,6 @@ public class Pivot extends SubsystemBase {
   }
 
   public Command changeSetpoint(double setPoint) {
-    // pivotSetpoint = MathUtil.clamp(setPoint, PivotConstants.minimumPosition,
-    // PivotConstants.maximumPosition);
     return Commands.runOnce(
         () -> {
           pivotSetPoint =
@@ -77,6 +71,21 @@ public class Pivot extends SubsystemBase {
         },
         this);
   }
+
+  public Command relativeChangeSetpoint(double difference){
+    return Commands.run(
+      () -> {
+        changeSetpoint(pivotSetPoint + difference);
+      });
+  }
+
+  public Command freezeSetpoint(){
+    return Commands.run(
+      () -> {
+        changeSetpoint(readEncoderValue());
+      }
+    );
+  } //this should change the setpoint to wherever the pivot already is so the pivot will stop moving
 
   public Command setPivotAngleFromVision(Supplier<VisionFrame> visionFrameSupplier) {
     return Commands.run(

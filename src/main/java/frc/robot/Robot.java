@@ -7,7 +7,11 @@ package frc.robot;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.Subsystems.Drivetrain.Drivetrain;
+import frc.robot.Subsystems.Pivot.Pivot;
+import frc.robot.Subsystems.Shooter.Shooter;
+import frc.robot.Subsystems.Vision.Vision;
 
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -34,6 +38,9 @@ public class Robot extends LoggedRobot {
 
 
   private Drivetrain drivetrain = new Drivetrain();
+  private Vision vision = new Vision();
+  private Pivot pivot = new Pivot();
+  private Shooter shooter = new Shooter(null);
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -65,7 +72,17 @@ public class Robot extends LoggedRobot {
 
     Logger.start();
 
-    driver.leftTrigger().whileTrue(drivetrain.allignDrivetrainFromVision(null)); //need to give a vision frame supplier
+    driver.leftTrigger().whileTrue(drivetrain.allignDrivetrainFromVision(vision::getVisionFrame)); //need to give a vision frame supplier
+
+    operator.a().onTrue(pivot.changeSetpoint(0)); //bring the pivot down to zero
+
+    operator.leftBumper().onTrue(pivot.relativeChangeSetpoint(-0.3)); //reduce hight of pivot manualy
+    operator.leftBumper().onFalse(pivot.freezeSetpoint());
+
+    operator.rightBumper().onTrue(pivot.relativeChangeSetpoint(0.3)); //increase hight of pivot manualy
+    operator.rightBumper().onFalse(pivot.freezeSetpoint());
+
+    operator.b().onTrue(shooter.changeFlywheelSetpoint(ShooterConstants.kFreeze)); //disable movement of the flywheels
   }
 
   @Override

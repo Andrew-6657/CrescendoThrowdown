@@ -122,11 +122,11 @@ public class Constants {
       }
     }
 
-    public static final FlywheelSetPoint kFeedRPM =
-        new FlywheelSetPoint(300, 300); // these need to be configured
+    public static final FlywheelSetPoint kFeedRPM = new FlywheelSetPoint(300, 300); // these need to be configured
     public static final FlywheelSetPoint kSpeakerRPM = new FlywheelSetPoint(300, 300);
     public static final FlywheelSetPoint kAmpRPM = new FlywheelSetPoint(300, 300);
     public static final FlywheelSetPoint kIntake = new FlywheelSetPoint(-100, -100);
+    public static final FlywheelSetPoint kFreeze = new FlywheelSetPoint(0, 0);
 
     public static class LeftFlywheels {
       public static final double kGearing = (1d / 1);
