@@ -1,21 +1,14 @@
 package frc.robot.Subsystems.Drivetrain;
 
-import java.util.function.Supplier;
-
-import org.littletonrobotics.junction.Logger;
-
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.WPI_PigeonIMU;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -25,6 +18,8 @@ import frc.robot.Constants.DriveConstants.RotateState;
 import frc.robot.Constants.RobotConstants;
 import frc.robot.Constants.RobotConstants.CANID;
 import frc.robot.Constants.VisionFrame;
+import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 
 public class Drivetrain extends SubsystemBase {
 
@@ -38,9 +33,6 @@ public class Drivetrain extends SubsystemBase {
   private RotateState mCurrentRotateState;
 
   private final WPI_PigeonIMU mPigeon;
-
-
-
 
   public Drivetrain() {
     mPigeon = new WPI_PigeonIMU(CANID.kPigeon);
@@ -78,7 +70,8 @@ public class Drivetrain extends SubsystemBase {
     mBackLeft.follow(mFrontLeft);
 
     mFrontRight.setInverted(InvertType.InvertMotorOutput);
-    mBackRight.setInverted(InvertType.InvertMotorOutput); // REVIEW COMMENT: This should follow master
+    mBackRight.setInverted(
+        InvertType.InvertMotorOutput); // REVIEW COMMENT: This should follow master
     mBackRight.follow(mFrontRight);
 
     mDifferentialDrive = new DifferentialDrive(mFrontLeft, mFrontRight);
@@ -92,11 +85,11 @@ public class Drivetrain extends SubsystemBase {
     mBackRight.configSupplyCurrentLimit(currentLimit);
   }
 
-  public Rotation2d getAngle(){
+  public Rotation2d getAngle() {
     return mPigeon.getRotation2d().times(-1);
   }
 
-  public double getPitch(){
+  public double getPitch() {
     return mPigeon.getPitch();
   }
 
@@ -104,7 +97,6 @@ public class Drivetrain extends SubsystemBase {
     mDifferentialDrive.arcadeDrive(
         xSpeed * mCurrentState.direction, -rSpeed * mCurrentState.direction, true);
   }
-
 
   public Command changeState(FrontState frontState) {
     return new InstantCommand(() -> mCurrentState = frontState);
@@ -119,10 +111,10 @@ public class Drivetrain extends SubsystemBase {
   boolean allignmentInTolerance;
   boolean vellocityInTolerance;
 
-  public boolean drivetrainAlligned(Supplier<VisionFrame> visionFrameSupplier){
+  public boolean drivetrainAlligned(Supplier<VisionFrame> visionFrameSupplier) {
     VisionFrame visionFrame = visionFrameSupplier.get();
-    allignmentInTolerance = MathUtil.isNear(0, visionFrame.tX, 120); //tolerance needs tuning
-    vellocityInTolerance = MathUtil.isNear(0, mPigeon.getRate(), 5); //tollercance needs tuning
+    allignmentInTolerance = MathUtil.isNear(0, visionFrame.tX, 120); // tolerance needs tuning
+    vellocityInTolerance = MathUtil.isNear(0, mPigeon.getRate(), 5); // tollercance needs tuning
     return allignmentInTolerance && vellocityInTolerance;
   }
 
@@ -130,9 +122,9 @@ public class Drivetrain extends SubsystemBase {
     return Commands.run(
         () -> {
           VisionFrame visionFrame = visionFrameSupplier.get();
-          double output = allignPID.calculate(visionFrame.tX,0);
+          double output = allignPID.calculate(visionFrame.tX, 0);
 
-          if(drivetrainAlligned(visionFrameSupplier)){
+          if (drivetrainAlligned(visionFrameSupplier)) {
             drive(0, 0);
           } else {
             drive(0, output);

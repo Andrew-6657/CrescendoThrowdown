@@ -7,6 +7,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Subsystems.Drivetrain.Drivetrain;
+
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -17,8 +19,8 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 public class Robot extends LoggedRobot {
 
   // Driver Controllers
-  private CommandXboxController mDriver = new CommandXboxController(0);
-  private CommandXboxController mOperator = new CommandXboxController(1);
+  private CommandXboxController driver = new CommandXboxController(0);
+  private CommandXboxController operator = new CommandXboxController(1);
 
   // Need to edit this once controlers are decided on
 
@@ -29,6 +31,9 @@ public class Robot extends LoggedRobot {
   }
 
   public static final RobotMode mode = Robot.isReal() ? RobotMode.REAL : RobotMode.SIM;
+
+
+  private Drivetrain drivetrain = new Drivetrain();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -59,6 +64,8 @@ public class Robot extends LoggedRobot {
     }
 
     Logger.start();
+
+    driver.leftTrigger().whileTrue(drivetrain.allignDrivetrainFromVision(null)); //need to give a vision frame supplier
   }
 
   @Override

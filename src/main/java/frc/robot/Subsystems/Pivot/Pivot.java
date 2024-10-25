@@ -63,8 +63,7 @@ public class Pivot extends SubsystemBase {
 
     pivotEncoder.setPositionOffset(PivotConstants.posOffset);
 
-
-    //pivotMap.put(0d, 0d);
+    // pivotMap.put(0d, 0d);
   }
 
   public Command changeSetpoint(double setPoint) {

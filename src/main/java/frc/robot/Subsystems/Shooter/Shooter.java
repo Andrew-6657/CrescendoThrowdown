@@ -24,12 +24,9 @@ public class Shooter extends SubsystemBase {
     return this.runOnce(() -> shooterIO.newSetpoints(flywheelSetPoint));
   }
 
-
-
   public boolean atFlywheelSetpoint() {
     return shooterInputs.flywheelAtSetPointL && shooterInputs.flywheelAtSetPointR;
   }
-
 
   @Override
   public void periodic() {
