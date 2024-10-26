@@ -11,21 +11,19 @@ import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
 
-  // IO Definition
   private final ShooterIO shooterIO;
   private final ShooterIOInputsAutoLogged shooterInputs = new ShooterIOInputsAutoLogged();
 
-  /** Creates a new Shooter. */
   public Shooter(ShooterIO shooterIO) {
     this.shooterIO = shooterIO;
   }
 
-  public Command changeFlywheelSetpoint(FlywheelSetPoint flywheelSetPoint) {
-    return this.runOnce(() -> shooterIO.newSetpoints(flywheelSetPoint));
+  public Command changeSetpoint(FlywheelSetPoint flywheelSetPoint) {
+    return this.runOnce(() -> shooterIO.changeSetpoint(flywheelSetPoint));
   }
 
-  public boolean atFlywheelSetpoint() {
-    return shooterInputs.flywheelAtSetPointL && shooterInputs.flywheelAtSetPointR;
+  public boolean atSetpoint() {
+    return shooterInputs.leftAtSetpoint && shooterInputs.rightAtSetpoint;
   }
 
   @Override

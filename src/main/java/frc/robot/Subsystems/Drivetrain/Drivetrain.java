@@ -7,15 +7,10 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.DriveConstants.FrontState;
-import frc.robot.Constants.DriveConstants.RotateState;
-import frc.robot.Constants.RobotConstants;
 import frc.robot.Constants.RobotConstants.CANID;
 import frc.robot.Constants.VisionFrame;
 import java.util.function.Supplier;
@@ -23,123 +18,115 @@ import org.littletonrobotics.junction.Logger;
 
 public class Drivetrain extends SubsystemBase {
 
-  private final WPI_TalonSRX mFrontLeft;
-  private final WPI_TalonSRX mFrontRight;
-  private final WPI_TalonSRX mBackLeft;
-  private final WPI_TalonSRX mBackRight;
+  // Drive motor controllers
+  private final WPI_TalonSRX frontLeft;
+  private final WPI_TalonSRX frontRight;
+  private final WPI_TalonSRX backLeft;
+  private final WPI_TalonSRX backRight;
 
-  private final DifferentialDrive mDifferentialDrive;
-  private FrontState mCurrentState;
-  private RotateState mCurrentRotateState;
+  // Helper class for kinematics
+  private final DifferentialDrive differentialDrive;
 
-  private final WPI_PigeonIMU mPigeon;
+  // Gyro
+  private final WPI_PigeonIMU gyro;
+
+  // PID Controller for Speaker Alignment
+  private PIDController alignPID = new PIDController(0, 0, 0); // TODO: Tune
+
+  // Variables for tracking if we are aligned with the speaker
+  private boolean allignmentInTolerance;
+  private boolean vellocityInTolerance;
 
   public Drivetrain() {
-    mPigeon = new WPI_PigeonIMU(CANID.kPigeon);
 
-    mFrontLeft = new WPI_TalonSRX(CANID.kFrontLeft);
-    mFrontRight = new WPI_TalonSRX(CANID.kFrontRight);
-    mBackLeft = new WPI_TalonSRX(CANID.kBackLeft);
-    mBackRight = new WPI_TalonSRX(CANID.kBackRight);
+    // Assign CAN IDs
+    frontLeft = new WPI_TalonSRX(CANID.kFrontLeft);
+    frontRight = new WPI_TalonSRX(CANID.kFrontRight);
+    backLeft = new WPI_TalonSRX(CANID.kBackLeft);
+    backRight = new WPI_TalonSRX(CANID.kBackRight);
+    gyro = new WPI_PigeonIMU(CANID.kPigeon);
 
-    mFrontLeft.configFactoryDefault();
-    mFrontRight.configFactoryDefault();
-    mBackLeft.configFactoryDefault();
-    mBackRight.configFactoryDefault();
+    // Reset configs to defaults
+    frontLeft.configFactoryDefault();
+    frontRight.configFactoryDefault();
+    backLeft.configFactoryDefault();
+    backRight.configFactoryDefault();
 
-    mBackLeft.follow(mFrontLeft);
-    mBackRight.follow(mFrontRight);
+    // Configure Following
+    backLeft.follow(frontLeft);
+    backRight.follow(frontRight);
 
-    mFrontLeft.configVoltageCompSaturation(RobotConstants.maxVoltage);
-    mFrontRight.configVoltageCompSaturation(RobotConstants.maxVoltage);
-    mBackLeft.configVoltageCompSaturation(RobotConstants.maxVoltage);
-    mBackRight.configVoltageCompSaturation(RobotConstants.maxVoltage);
+    // Enable Brake Mode
+    frontLeft.setNeutralMode(NeutralMode.Brake);
+    frontRight.setNeutralMode(NeutralMode.Brake);
+    backLeft.setNeutralMode(NeutralMode.Brake);
+    backRight.setNeutralMode(NeutralMode.Brake);
 
-    mFrontLeft.enableVoltageCompensation(true);
-    mFrontRight.enableVoltageCompensation(true);
-    mBackLeft.enableVoltageCompensation(true);
-    mBackRight.enableVoltageCompensation(true);
+    // Configure Motor Inversion
+    frontLeft.setInverted(InvertType.None);
+    frontRight.setInverted(InvertType.InvertMotorOutput);
 
-    mFrontLeft.setNeutralMode(NeutralMode.Brake);
-    mFrontRight.setNeutralMode(NeutralMode.Brake);
-    mBackLeft.setNeutralMode(NeutralMode.Brake);
-    mBackRight.setNeutralMode(NeutralMode.Brake);
+    backLeft.setInverted(InvertType.FollowMaster);
+    backRight.setInverted(InvertType.FollowMaster);
 
-    mFrontLeft.setInverted(InvertType.None);
-    mBackLeft.setInverted(InvertType.None); // REVIEW COMMENT: This should follow master
-    mBackLeft.follow(mFrontLeft);
+    // Setup helper class
+    differentialDrive = new DifferentialDrive(frontLeft, frontRight);
 
-    mFrontRight.setInverted(InvertType.InvertMotorOutput);
-    mBackRight.setInverted(
-        InvertType.InvertMotorOutput); // REVIEW COMMENT: This should follow master
-    mBackRight.follow(mFrontRight);
-
-    mDifferentialDrive = new DifferentialDrive(mFrontLeft, mFrontRight);
-
-    // REVIEW COMMENT: Reminder to look at current limmit again with a mentor
+    // Apply current limits
     SupplyCurrentLimitConfiguration currentLimit =
         new SupplyCurrentLimitConfiguration(true, 40, 40, 0);
-    mFrontLeft.configSupplyCurrentLimit(currentLimit);
-    mFrontRight.configSupplyCurrentLimit(currentLimit);
-    mBackLeft.configSupplyCurrentLimit(currentLimit);
-    mBackRight.configSupplyCurrentLimit(currentLimit);
+    frontLeft.configSupplyCurrentLimit(currentLimit);
+    frontRight.configSupplyCurrentLimit(currentLimit);
+    backLeft.configSupplyCurrentLimit(currentLimit);
+    backRight.configSupplyCurrentLimit(currentLimit);
   }
 
-  public Rotation2d getAngle() {
-    return mPigeon.getRotation2d().times(-1);
+  /**
+   * Drives the robot with an Arcade Drive Style
+   *
+   * @param xSpeed Forward magnitude [-1, 1]
+   * @param rSpeed Angular magnitude [-1, 1]
+   * @param squareInputs
+   */
+  public void drive(double xSpeed, double rSpeed, boolean squareInputs) {
+    differentialDrive.arcadeDrive(xSpeed, rSpeed, squareInputs);
   }
 
-  public double getPitch() {
-    return mPigeon.getPitch();
-  }
-
-  public void drive(double xSpeed, double rSpeed) {
-    mDifferentialDrive.arcadeDrive(
-        xSpeed * mCurrentState.direction, -rSpeed * mCurrentState.direction, true);
-  }
-
-  public Command changeState(FrontState frontState) {
-    return new InstantCommand(() -> mCurrentState = frontState);
-  }
-
-  public Command changeRotateState(RotateState RotateState) {
-    return new InstantCommand(() -> mCurrentRotateState = RotateState);
-  }
-
-  private PIDController allignPID = new PIDController(0, 0, 0);
-
-  boolean allignmentInTolerance;
-  boolean vellocityInTolerance;
-
-  public boolean drivetrainAlligned(Supplier<VisionFrame> visionFrameSupplier) {
-    VisionFrame visionFrame = visionFrameSupplier.get();
-    allignmentInTolerance = MathUtil.isNear(0, visionFrame.tX, 120); // tolerance needs tuning
-    vellocityInTolerance = MathUtil.isNear(0, mPigeon.getRate(), 5); // tollercance needs tuning
+  /**
+   * @return True if the drivetrain is aligned with the speaker, and no longer moving.
+   */
+  public boolean isAligned() {
     return allignmentInTolerance && vellocityInTolerance;
   }
 
-  public Command allignDrivetrainFromVision(Supplier<VisionFrame> visionFrameSupplier) {
+  /**
+   * Angles the robot towards the speaker if the center speaker tag is visible. (Will not move
+   * otherwise)
+   *
+   * @param visionFrameSupplier Method that returns a VisionFrame object
+   * @return Command to be ran
+   */
+  public Command speakerAlign(Supplier<VisionFrame> visionFrameSupplier) {
     return Commands.run(
         () -> {
           VisionFrame visionFrame = visionFrameSupplier.get();
-          double output = allignPID.calculate(visionFrame.tX, 0);
+          double output = visionFrame.hasTarget ? alignPID.calculate(visionFrame.tX, 0) : 0;
 
-          if (drivetrainAlligned(visionFrameSupplier)) {
-            drive(0, 0);
-          } else {
-            drive(0, output);
-          }
+          allignmentInTolerance = MathUtil.isNear(0, visionFrame.tX, 120);
+          vellocityInTolerance = MathUtil.isNear(0, gyro.getRate(), 5);
+
+          drive(0, isAligned() ? 0 : output, false);
         });
   }
 
+  /** Periodic logging of useful values. */
   @Override
   public void periodic() {
-    Logger.recordOutput("Front Left Motor", mFrontLeft.get());
-    Logger.recordOutput("Back Left Motor", mBackLeft.get());
-    Logger.recordOutput("Front Right Motor", mFrontRight.get());
-    Logger.recordOutput("Back Right Motor", mBackRight.get());
-    Logger.recordOutput("Foward", mCurrentState.direction);
-    Logger.recordOutput("Turn", mCurrentRotateState.direction);
+    Logger.recordOutput("Left Motors", frontLeft.get());
+    Logger.recordOutput("Right Motors", frontRight.get());
+    Logger.recordOutput("Left Current", frontLeft.getSupplyCurrent());
+    Logger.recordOutput("Right Current", frontRight.getSupplyCurrent());
+    Logger.recordOutput("Angular Velocity", gyro.getRate());
     Logger.recordOutput("Allignment in Tollerance", allignmentInTolerance);
     Logger.recordOutput("Velocity in Tollerance", vellocityInTolerance);
   }

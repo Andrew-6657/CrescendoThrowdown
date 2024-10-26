@@ -12,7 +12,6 @@ import frc.robot.Subsystems.Drivetrain.Drivetrain;
 import frc.robot.Subsystems.Pivot.Pivot;
 import frc.robot.Subsystems.Shooter.Shooter;
 import frc.robot.Subsystems.Vision.Vision;
-
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -26,8 +25,15 @@ public class Robot extends LoggedRobot {
   private CommandXboxController driver = new CommandXboxController(0);
   private CommandXboxController operator = new CommandXboxController(1);
 
-  // Need to edit this once controlers are decided on
+  // Subsystems
+  private Drivetrain drivetrain = new Drivetrain();
+  private Pivot pivot = new Pivot();
+  private Shooter shooter = new Shooter(null);
 
+  // Vision
+  private Vision vision = new Vision();
+
+  // AKit Setup
   public static enum RobotMode {
     SIM,
     REPLAY,
@@ -36,16 +42,6 @@ public class Robot extends LoggedRobot {
 
   public static final RobotMode mode = Robot.isReal() ? RobotMode.REAL : RobotMode.SIM;
 
-
-  private Drivetrain drivetrain = new Drivetrain();
-  private Vision vision = new Vision();
-  private Pivot pivot = new Pivot();
-  private Shooter shooter = new Shooter(null);
-
-  /**
-   * This function is run when the robot is first started up and should be used for any
-   * initialization code.
-   */
   @Override
   public void robotInit() {
     Logger.recordMetadata("Codebase", "6657 2024 Offseason");
@@ -72,49 +68,20 @@ public class Robot extends LoggedRobot {
 
     Logger.start();
 
-    driver.leftTrigger().whileTrue(drivetrain.allignDrivetrainFromVision(vision::getVisionFrame)); //need to give a vision frame supplier
+    // Driver Controls
 
-    operator.a().onTrue(pivot.changeSetpoint(0)); //bring the pivot down to zero
+    driver.leftTrigger().whileTrue(drivetrain.speakerAlign(vision::getVisionFrame));
 
-    operator.povDown().onTrue(pivot.relativeChangeSetpoint(-0.3)); //reduce hight of pivot manualy
-    //operator.().onFalse(pivot.freezeSetpoint());
+    operator.a().onTrue(pivot.changeSetpoint(0));
 
-    operator.povUp().onTrue(pivot.relativeChangeSetpoint(0.3)); //increase hight of pivot manualy
-    //operator.().onFalse(pivot.freezeSetpoint());
+    operator.povDown().onTrue(pivot.incrementSetpoint(-0.3));
+    operator.povUp().onTrue(pivot.incrementSetpoint(0.3));
 
-    operator.b().onTrue(shooter.changeFlywheelSetpoint(ShooterConstants.kFreeze)); //disable movement of the flywheels
+    operator.b().onTrue(shooter.changeSetpoint(ShooterConstants.kStop));
   }
 
   @Override
-  public void robotPeriodic() {}
-
-  @Override
-  public void autonomousInit() {}
-
-  @Override
-  public void autonomousPeriodic() {}
-
-  @Override
-  public void teleopInit() {}
-
-  @Override
-  public void teleopPeriodic() {}
-
-  @Override
-  public void disabledInit() {}
-
-  @Override
-  public void disabledPeriodic() {}
-
-  @Override
-  public void testInit() {}
-
-  @Override
-  public void testPeriodic() {}
-
-  @Override
-  public void simulationInit() {}
-
-  @Override
-  public void simulationPeriodic() {}
+  public void robotPeriodic() {
+    vision.updateVisionData();
+  }
 }

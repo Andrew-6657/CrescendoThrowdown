@@ -4,9 +4,29 @@ import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import edu.wpi.first.math.MathUtil;
 
-// import edu.wpi.first.math.util.Units;
-
 public class Constants {
+
+  public static class RobotConstants {
+    public static class CANID {
+
+      // Drivetrain
+      public static int kFrontLeft = 1;
+      public static int kBackLeft = 2;
+      public static int kFrontRight = 3;
+      public static int kBackRight = 4;
+      public static int kPigeon = 5;
+
+      // Pivot
+      public static int kPivotL = 6;
+      public static int kPivotR = 7;
+
+      // Shooter
+      public static int kRightFlywheel = 8;
+      public static int kLeftFlywheel = 9;
+      public static int kChamberTOF = 10;
+      public static int kKicker = 11;
+    }
+  }
 
   public static class VisionFrame {
     public double tX = 0;
@@ -21,92 +41,25 @@ public class Constants {
   }
 
   public static class DriveConstants {
-    public static double kTurboForwardSpeed = 1.0;
-    public static double kNormalForwardSpeed = 0.4;
-    public static double kTurboTurningSpeed = 0.7;
-    public static double kNormalTurningSpeed = 0.5;
-
-    // Note, enum is a special class for constants that uses comma list notation
-    public static enum FrontState {
-      FORWARD(1),
-      REVERSE(-1);
-
-      public final double direction;
-
-      /**
-       * @param direction Motor Percentage
-       */
-      FrontState(double direction) {
-        this.direction = direction;
-      }
-    }
-
-    public static enum RotateState {
-      POSITVIE(1), // find out which direction is clockwise/counterclockwise
-      NEGATIVE(-1);
-
-      public final double direction;
-
-      /**
-       * @param direction Motor Percentage
-       */
-      RotateState(double direction) {
-        this.direction = direction;
-      }
-    }
-  }
-
-  public static class RobotConstants {
-    public static double maxVoltage = 12.0;
-
-    public static class CANID {
-      public static int kFrontLeft = 1;
-      public static int kBackLeft = 2;
-      public static int kFrontRight = 3;
-      public static int kBackRight = 4;
-      public static int kIntake = 6;
-      public static int kPivotL = 7;
-      public static int kPivotR = 8;
-      public static int kRightFlywheel = 9;
-      public static int kLeftFlywheel = 10;
-      public static int kIntakeTOF = 11;
-      public static int kPigeon = 12;
-    }
+    public static double kForwardSpeedMod = 0.4;
+    public static double kTurningSpeedMod = 0.5;
   }
 
   public static class PivotConstants {
 
-    public static final double kPivotCurrentLimit = 30;
-
-    public static final double posOffset = 0.1;
+    public static final double kCurrentLimit = 30;
 
     public static final double minimumPosition = 0;
     public static final double maximumPosition = 104;
 
-    public static final double setPointTolerance = 1.0; // degrees
+    public static final double positionTolerance = 0; // TODO: Tune
 
-    public static final double kGearing = 1d / (7 * 5 * 8);
-
-    public static Slot0Configs kSlot0 = // These need to be tuned
-        new Slot0Configs()
-            .withKS(0)
-            .withKV(12d / ((6380d / 60) * kGearing)) // Volts/Mechanism RPS
-            .withKP(150)
-            .withKI(0)
-            .withKD(0);
-
-    public static final CurrentLimitsConfigs kPivotCurrentConfigs =
-        new CurrentLimitsConfigs()
-            .withStatorCurrentLimit(kPivotCurrentLimit)
-            .withSupplyCurrentLimit(kPivotCurrentLimit)
-            .withStatorCurrentLimitEnable(true)
-            .withSupplyCurrentLimitEnable(true)
-            .withSupplyCurrentThreshold(kPivotCurrentLimit)
-            .withSupplyTimeThreshold(0);
+    public static final double encoderOffset = 0; // TODO: Tune
   }
 
   public static class ShooterConstants {
 
+    // Object for storing a dual flywheel setpoint
     public static class FlywheelSetPoint {
 
       public double leftRPM = 0;
@@ -122,18 +75,19 @@ public class Constants {
       }
     }
 
-    public static final FlywheelSetPoint kFeedRPM = new FlywheelSetPoint(300, 300); // these need to be configured
-    public static final FlywheelSetPoint kSpeakerRPM = new FlywheelSetPoint(300, 300);
-    public static final FlywheelSetPoint kAmpRPM = new FlywheelSetPoint(300, 300);
-    public static final FlywheelSetPoint kIntake = new FlywheelSetPoint(-100, -100);
-    public static final FlywheelSetPoint kFreeze = new FlywheelSetPoint(0, 0);
+    // Flywheel Setpoints
+    public static final FlywheelSetPoint kSpeakerRPM = new FlywheelSetPoint(4000, 8000);
+    public static final FlywheelSetPoint kIntake = new FlywheelSetPoint(-2000, -2000);
+    public static final FlywheelSetPoint kIdle = new FlywheelSetPoint(1000, 2000);
+    public static final FlywheelSetPoint kStop = new FlywheelSetPoint(0, 0);
 
     public static class LeftFlywheels {
+
       public static final double kGearing = (1d / 1);
 
       public static final double kCurrentLimit = 40;
 
-      public static final double setPointTolerance = 2.0; // rpm
+      public static final double rpmTolerance = 2.0; // TODO Tune
 
       public static final CurrentLimitsConfigs kCurrentConfigs =
           new CurrentLimitsConfigs()
@@ -144,8 +98,9 @@ public class Constants {
               .withSupplyCurrentThreshold(kCurrentLimit)
               .withSupplyTimeThreshold(0);
 
+      // TODO: Tune
       public static Slot0Configs kSlot0 =
-          new Slot0Configs() // these values need to be tuned
+          new Slot0Configs()
               .withKS(.05)
               .withKV(12d / ((6380d / 60) * kGearing)) // Volts/Mechanism RPS
               .withKP(0)
@@ -154,11 +109,12 @@ public class Constants {
     }
 
     public static class RightFlywheels {
+
       public static final double kGearing = (2d / 1);
 
       public static final double kCurrentLimit = 40;
 
-      public static final double setPointTolerance = 2.0; // rmp
+      public static final double rpmTolerance = 2.0; // rmp
 
       public static final CurrentLimitsConfigs kCurrentConfigs =
           new CurrentLimitsConfigs()
@@ -169,8 +125,9 @@ public class Constants {
               .withSupplyCurrentThreshold(kCurrentLimit)
               .withSupplyTimeThreshold(0);
 
+      // TODO: Tune
       public static Slot0Configs kSlot0 =
-          new Slot0Configs() // these values need to be tuned
+          new Slot0Configs()
               .withKS(.05)
               .withKV(12d / ((6380d / 60) * kGearing)) // Volts/Mechanism RPS
               .withKP(0)

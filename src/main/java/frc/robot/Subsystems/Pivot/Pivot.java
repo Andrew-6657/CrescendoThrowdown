@@ -2,8 +2,6 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-// note, pivote gearing is 7 * 5 * 8
-
 package frc.robot.Subsystems.Pivot;
 
 import com.ctre.phoenix.motorcontrol.InvertType;
@@ -14,7 +12,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-// import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -26,95 +23,110 @@ import org.littletonrobotics.junction.Logger;
 
 public class Pivot extends SubsystemBase {
 
-  private PIDController pivotPID = new PIDController(0, 0, 0);
+  private WPI_TalonSRX leftMotor = new WPI_TalonSRX(CANID.kPivotL);
+  private WPI_TalonSRX rightMotor = new WPI_TalonSRX(CANID.kPivotR);
 
   private DutyCycleEncoder pivotEncoder = new DutyCycleEncoder(0);
+  private PIDController anglePID = new PIDController(0, 0, 0); // TODO: Tune
 
-  private double pivotSetPoint = 0;
-
-  private WPI_TalonSRX pivotMotorL = new WPI_TalonSRX(CANID.kPivotL);
-  private WPI_TalonSRX pivotMotorR = new WPI_TalonSRX(CANID.kPivotR);
-
+  private double setPoint = 0;
   private InterpolatingDoubleTreeMap pivotMap;
 
   public Pivot() {
 
-    pivotMotorL.configFactoryDefault();
-    pivotMotorR.configFactoryDefault();
+    leftMotor.configFactoryDefault();
+    rightMotor.configFactoryDefault();
 
-    pivotMotorL.setNeutralMode(NeutralMode.Brake);
-    pivotMotorL.configVoltageCompSaturation(10); // tune later
-    pivotMotorL.enableVoltageCompensation(true);
-    pivotMotorL.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30, 30, 0));
+    leftMotor.setNeutralMode(NeutralMode.Brake);
+    leftMotor.configSupplyCurrentLimit(
+        new SupplyCurrentLimitConfiguration(
+            true, PivotConstants.kCurrentLimit, PivotConstants.kCurrentLimit, 0));
 
-    pivotMotorR.setNeutralMode(NeutralMode.Brake);
-    pivotMotorR.configVoltageCompSaturation(10); // tune later
-    pivotMotorR.enableVoltageCompensation(true);
-    pivotMotorR.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30, 30, 0));
+    rightMotor.setNeutralMode(NeutralMode.Brake);
+    rightMotor.configSupplyCurrentLimit(
+        new SupplyCurrentLimitConfiguration(
+            true, PivotConstants.kCurrentLimit, PivotConstants.kCurrentLimit, 0));
 
-    pivotMotorL.follow(pivotMotorR);
+    leftMotor.follow(rightMotor);
 
-    pivotMotorL.setInverted(InvertType.OpposeMaster);
-    pivotMotorR.setInverted(InvertType.InvertMotorOutput);
+    leftMotor.setInverted(InvertType.OpposeMaster);
+    rightMotor.setInverted(InvertType.InvertMotorOutput);
 
-    pivotEncoder.setPositionOffset(PivotConstants.posOffset);
+    pivotEncoder.setPositionOffset(PivotConstants.encoderOffset);
 
-    // pivotMap.put(0d, 0d);
+    pivotMap.put(0d, 0d);
   }
 
-  public Command changeSetpoint(double setPoint) {
+  /**
+   * Changes the current pivot setpoint
+   *
+   * @param newSetpoint The setpoint to change to.
+   * @return Command to run
+   */
+  public Command changeSetpoint(double newSetpoint) {
     return Commands.runOnce(
         () -> {
-          pivotSetPoint =
+          setPoint =
               MathUtil.clamp(
-                  setPoint, PivotConstants.minimumPosition, PivotConstants.maximumPosition);
+                  newSetpoint, PivotConstants.minimumPosition, PivotConstants.maximumPosition);
         },
         this);
   }
 
-  public Command relativeChangeSetpoint(double difference){
-    return Commands.run(
-      () -> {
-        changeSetpoint(pivotSetPoint + difference);
-      });
+  /**
+   * Increment the current setpoint by a given value.
+   *
+   * @param difference The amount to change the setpoint by.
+   * @return Command to run
+   */
+  public Command incrementSetpoint(double difference) {
+    return Commands.runOnce(
+        () -> {
+          changeSetpoint(setPoint + difference);
+        });
   }
 
-  /* 
-  public Command freezeSetpoint(){
-    return Commands.run(
-      () -> {
-        changeSetpoint(readEncoderValue());
-      }
-    );
-  } //this should change the setpoint to wherever the pivot already is so the pivot will stop moving */
-
-   
-  public Command setPivotAngleFromVision(Supplier<VisionFrame> visionFrameSupplier) {
+  /**
+   * Changes the setpoint of the shooter depending on vision data If tracking is lost mid command,
+   * the setpoint is left unchanged.
+   *
+   * @param visionFrameSupplier Method that returns a VisionFrame object
+   * @return Command to run
+   */
+  public Command aimWithVision(Supplier<VisionFrame> visionFrameSupplier) {
     return Commands.run(
         () -> {
           VisionFrame visionFrame = visionFrameSupplier.get();
-          pivotSetPoint = (visionFrame.hasTarget) ? pivotMap.get(visionFrame.tY) : 0;
+          setPoint = (visionFrame.hasTarget) ? pivotMap.get(visionFrame.tY) : setPoint;
         });
   }
-  
 
-  public double readEncoderValue() {
+  /**
+   * @return Current angle reported by the pivot encoder.
+   */
+  public double getAngle() {
     return pivotEncoder.getAbsolutePosition() - pivotEncoder.getPositionOffset();
   }
 
-  public boolean pivotAtSetPoint() {
-    return MathUtil.isNear(pivotSetPoint, readEncoderValue(), PivotConstants.setPointTolerance);
+  /**
+   * @return True if the pivot is at its setpoint within a specified tolerance.
+   */
+  public boolean atSetpoint() {
+    return MathUtil.isNear(setPoint, getAngle(), PivotConstants.positionTolerance);
   }
 
   @Override
   public void periodic() {
-    double output = pivotPID.calculate(readEncoderValue(), pivotSetPoint);
-    pivotMotorR.setVoltage(output);
 
+    // Runs the Pivot PID
+    double output = anglePID.calculate(getAngle(), setPoint);
+    rightMotor.setVoltage(output);
+
+    // Logging
     Logger.recordOutput("Pivot/Output", output);
-    Logger.recordOutput("Pivot/Set Point", pivotSetPoint);
-
-    Logger.recordOutput("Pivot/Encoder ", readEncoderValue());
-    Logger.recordOutput("Pivot/At Set Point", pivotAtSetPoint());
+    Logger.recordOutput("Pivot/Current", leftMotor.getSupplyCurrent());
+    Logger.recordOutput("Pivot/Set Point", setPoint);
+    Logger.recordOutput("Pivot/Angle", getAngle());
+    Logger.recordOutput("Pivot/At Setpoint", atSetpoint());
   }
 }
