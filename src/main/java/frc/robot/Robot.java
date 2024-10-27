@@ -19,6 +19,8 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
+import com.ctre.phoenix6.SignalLogger;
+
 public class Robot extends LoggedRobot {
 
   // Driver Controllers
@@ -65,6 +67,8 @@ public class Robot extends LoggedRobot {
         Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
         break;
     }
+
+    SignalLogger.enableAutoLogging(false);
 
     Logger.start();
 
