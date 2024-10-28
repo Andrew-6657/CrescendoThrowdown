@@ -22,8 +22,7 @@ public interface ShooterIO {
     public double leftCurrent = 0.0; // Amps
     public double rightCurrent = 0.0; // Amps
 
-    public double kickerSetPoint = 0.0; //degrees
-    public double kickerPosition = 0.0; //degrees
+    public double kickerSetPoint = 0.0; //speed from -1 to 1
     public double kickerCurrent = 0.0; // Amps
 
     public double tofDistance = 0; // Inches

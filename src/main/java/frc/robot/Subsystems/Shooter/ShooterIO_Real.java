@@ -5,6 +5,7 @@ import au.grapplerobotics.LaserCan;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -27,7 +28,7 @@ public class ShooterIO_Real implements ShooterIO {
   private TalonFX rightFlywheel = new TalonFX(CANID.kRightFlywheel);
   private TalonFX leftFlywheel = new TalonFX(CANID.kLeftFlywheel);
 
-  private TalonSRX kicker = new TalonSRX(CANID.kKicker);
+  private WPI_TalonSRX kicker = new WPI_TalonSRX(CANID.kKicker);
   private double kickerSetPoint = 0.0;
 
   private FlywheelSetPoint setpoint = new FlywheelSetPoint(0, 0);
@@ -129,12 +130,9 @@ public class ShooterIO_Real implements ShooterIO {
     
     inputs.tofDistance = Units.metersToInches(sensor.getMeasurement().distance_mm * 0.001);
 
-    /*public double kickerSetPoint = 0.0; //degrees
-    public double kickerPosition = 0.0; //degrees
-    public double kikerCurrent = 0.0; // Amps */
-
     inputs.kickerSetPoint = kickerSetPoint;
-    //inputs.kickerPosition =  ;
-    //inputs.kickerCurrent =  ;
+
+    kicker.set(kickerSetPoint);
+    inputs.kickerCurrent =  kicker.getSupplyCurrent();
   }
 }
