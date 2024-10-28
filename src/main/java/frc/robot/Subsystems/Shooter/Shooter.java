@@ -22,8 +22,12 @@ public class Shooter extends SubsystemBase {
     return this.runOnce(() -> shooterIO.changeSetpoint(flywheelSetPoint));
   }
 
+  public Command changeKickerSetPoint(double setpoint){
+    return this.runOnce(() -> shooterIO.changeKickerSetPoint(setpoint));
+  }
+
   public boolean atSetpoint() {
-    return shooterInputs.leftAtSetpoint && shooterInputs.rightAtSetpoint;
+    return shooterInputs.leftAtSetPoint && shooterInputs.rightAtSetPoint;
   }
 
   public boolean noteDetected(){

@@ -134,5 +134,10 @@ public class Constants {
               .withKI(0)
               .withKD(0);
     }
+
+    public static class Kicker {
+      public static final double kCurrentLimit = 30;
+    }
+
   }
 }
