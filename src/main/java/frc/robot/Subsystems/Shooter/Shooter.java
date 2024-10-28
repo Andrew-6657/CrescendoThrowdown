@@ -26,6 +26,10 @@ public class Shooter extends SubsystemBase {
     return shooterInputs.leftAtSetpoint && shooterInputs.rightAtSetpoint;
   }
 
+  public boolean noteDetected(){
+      return (shooterInputs.tofDistance < 5); //in inches, need to measure outake
+  }
+
   @Override
   public void periodic() {
     shooterIO.updateInputs(shooterInputs);
