@@ -87,4 +87,9 @@ public class Robot extends LoggedRobot {
   public void robotPeriodic() {
     vision.updateVisionData();
   }
+
+  @Override
+  public void disabledInit() {
+    if (pivot.getAngle() < 80) pivot.EnableCoastMode();
+  }
 }

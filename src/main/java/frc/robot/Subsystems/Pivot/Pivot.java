@@ -57,6 +57,15 @@ public class Pivot extends SubsystemBase {
     pivotMap.put(0d, 0d);
   }
 
+  public Command EnableCoastMode() {
+    return Commands.runOnce(
+        () -> {
+          rightMotor.setNeutralMode(NeutralMode.Coast);
+          leftMotor.setNeutralMode(NeutralMode.Coast);
+        },
+        this);
+  }
+
   /**
    * Changes the current pivot setpoint
    *
@@ -120,12 +129,11 @@ public class Pivot extends SubsystemBase {
     // Runs the Pivot PID
     double output = anglePID.calculate(getAngle(), setPoint);
 
-    if(atSetpoint() && setPoint == 0){
+    if (atSetpoint() && setPoint == 0) {
       rightMotor.setVoltage(0);
     } else {
       rightMotor.setVoltage(output);
     }
-
 
     // Logging
     Logger.recordOutput("Pivot/Output", output);

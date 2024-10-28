@@ -138,6 +138,5 @@ public class Constants {
     public static class Kicker {
       public static final double kCurrentLimit = 30;
     }
-
   }
 }

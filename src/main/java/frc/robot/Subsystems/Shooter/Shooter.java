@@ -22,7 +22,7 @@ public class Shooter extends SubsystemBase {
     return this.runOnce(() -> shooterIO.changeSetpoint(flywheelSetPoint));
   }
 
-  public Command changeKickerSetPoint(double setpoint){
+  public Command changeKickerSetPoint(double setpoint) {
     return this.runOnce(() -> shooterIO.changeKickerSetPoint(setpoint));
   }
 
@@ -30,8 +30,8 @@ public class Shooter extends SubsystemBase {
     return shooterInputs.leftAtSetPoint && shooterInputs.rightAtSetPoint;
   }
 
-  public boolean noteDetected(){
-      return (shooterInputs.tofDistance < 5); //in inches, need to measure outake
+  public boolean noteDetected() {
+    return (shooterInputs.tofDistance < 5); // in inches, need to measure outake
   }
 
   @Override

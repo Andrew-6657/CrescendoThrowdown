@@ -22,7 +22,7 @@ public interface ShooterIO {
     public double leftCurrent = 0.0; // Amps
     public double rightCurrent = 0.0; // Amps
 
-    public double kickerSetPoint = 0.0; //speed from -1 to 1
+    public double kickerSetPoint = 0.0; // speed from -1 to 1
     public double kickerCurrent = 0.0; // Amps
 
     public double tofDistance = 0; // Inches
@@ -32,5 +32,5 @@ public interface ShooterIO {
 
   public default void changeSetpoint(FlywheelSetPoint Targets) {}
 
-  public default void changeKickerSetPoint(double setpoint){}
+  public default void changeKickerSetPoint(double setpoint) {}
 }
