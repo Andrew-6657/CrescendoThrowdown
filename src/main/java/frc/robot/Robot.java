@@ -79,6 +79,7 @@ public class Robot extends LoggedRobot {
 
     // Driver Controls
 
+    // Shooting at speaker sequence
     driver.rightTrigger().whileTrue(
       Commands.sequence(
         Commands.parallel(
@@ -93,14 +94,28 @@ public class Robot extends LoggedRobot {
                 )
           )
         ),
-        Commands.runOnce( () -> {
-          shooter.changeKickerSetPoint(1);
-        }).withInterruptBehavior(InterruptionBehavior.kCancelIncoming)));
+        Commands.sequence(
+          shooter.changeKickerSetPoint(1),
+          Commands.waitUntil(() -> !shooter.noteDetected()),
+          Commands.waitSeconds(0.3),
+          Commands.parallel(
+            shooter.changeKickerSetPoint(-0.8),
+            shooter.changeSetpoint(ShooterConstants.kIdle),
+            pivot.changeSetpoint(PivotConstants.minimumPosition)
+          ).raceWith(Commands.waitUntil(
+              (BooleanSupplier) Commands.parallel(
+                Commands.waitUntil(shooter::atSetpoint),
+                Commands.waitUntil(pivot::atSetpoint)
+                ))),
+            Commands.waitSeconds(0.1),
+            shooter.changeKickerSetPoint(0)
+        ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming)));
 
     driver.rightTrigger().onFalse(Commands.runOnce(() -> {
+        shooter.changeKickerSetPoint(0);
         shooter.changeSetpoint(ShooterConstants.kIdle);
         pivot.changeSetpoint(PivotConstants.minimumPosition);
-    }).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+    }));
 
     
 
