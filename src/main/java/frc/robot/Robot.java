@@ -7,7 +7,9 @@ package frc.robot;
 import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Subsystems.Drivetrain.Drivetrain;
 import frc.robot.Subsystems.Pivot.Pivot;
@@ -72,6 +74,35 @@ public class Robot extends LoggedRobot {
     Logger.start();
 
     // Driver Controls
+
+    driver.rightTrigger().whileTrue(
+      Commands.parallel(
+        shooter.changeSetpoint(ShooterConstants.kSpeaker),
+        pivot.aimWithVision(vision::getVisionFrame),
+        drivetrain.speakerAlign(vision::getVisionFrame),
+        Commands.run(
+          () -> {
+            
+          }
+        )));
+
+    driver.rightTrigger().onFalse(Commands.runOnce(() -> {
+        shooter.changeSetpoint(ShooterConstants.kIdle);
+        pivot.changeSetpoint(PivotConstants.minimumPosition);
+    }));
+
+    /*
+    driver.rightTrigger().onFalse(Commands.runOnce(() -> {
+      if(shooter.atSetpoint() && pivot.atSetpoint() && drivetrain.isAligned()){
+        // should the contents of this be commands?
+        shooter.changeKickerSetPoint(1.0); //I think 1 is max speed
+      } else {
+        // cancel the shooting
+        shooter.changeSetpoint(ShooterConstants.kIdle); //maybe this should be kIntake
+        pivot.changeSetpoint(PivotConstants.minimumPosition);
+      }
+    }));
+    */
 
     driver.leftTrigger().whileTrue(drivetrain.speakerAlign(vision::getVisionFrame));
 
