@@ -7,6 +7,7 @@ package frc.robot;
 import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.PivotConstants;
@@ -15,6 +16,9 @@ import frc.robot.Subsystems.Drivetrain.Drivetrain;
 import frc.robot.Subsystems.Pivot.Pivot;
 import frc.robot.Subsystems.Shooter.Shooter;
 import frc.robot.Subsystems.Vision.Vision;
+
+import java.util.function.BooleanSupplier;
+
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -76,33 +80,29 @@ public class Robot extends LoggedRobot {
     // Driver Controls
 
     driver.rightTrigger().whileTrue(
-      Commands.parallel(
-        shooter.changeSetpoint(ShooterConstants.kSpeaker),
-        pivot.aimWithVision(vision::getVisionFrame),
-        drivetrain.speakerAlign(vision::getVisionFrame),
-        Commands.run(
-          () -> {
-            
-          }
-        )));
+      Commands.sequence(
+        Commands.parallel(
+          shooter.changeSetpoint(ShooterConstants.kSpeaker),
+          pivot.aimWithVision(vision::getVisionFrame),
+          drivetrain.speakerAlign(vision::getVisionFrame)).raceWith(
+            Commands.waitUntil(
+              (BooleanSupplier) Commands.parallel(
+                Commands.waitUntil(shooter::atSetpoint),
+                Commands.waitUntil(pivot::atSetpoint),
+                Commands.waitUntil(drivetrain::isAligned)
+                )
+          )
+        ),
+        Commands.runOnce( () -> {
+          shooter.changeKickerSetPoint(1);
+        }).withInterruptBehavior(InterruptionBehavior.kCancelIncoming)));
 
     driver.rightTrigger().onFalse(Commands.runOnce(() -> {
         shooter.changeSetpoint(ShooterConstants.kIdle);
         pivot.changeSetpoint(PivotConstants.minimumPosition);
-    }));
+    }).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
-    /*
-    driver.rightTrigger().onFalse(Commands.runOnce(() -> {
-      if(shooter.atSetpoint() && pivot.atSetpoint() && drivetrain.isAligned()){
-        // should the contents of this be commands?
-        shooter.changeKickerSetPoint(1.0); //I think 1 is max speed
-      } else {
-        // cancel the shooting
-        shooter.changeSetpoint(ShooterConstants.kIdle); //maybe this should be kIntake
-        pivot.changeSetpoint(PivotConstants.minimumPosition);
-      }
-    }));
-    */
+    
 
     driver.leftTrigger().whileTrue(drivetrain.speakerAlign(vision::getVisionFrame));
 
