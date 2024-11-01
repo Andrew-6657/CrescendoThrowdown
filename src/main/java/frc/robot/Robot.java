@@ -17,7 +17,6 @@ import frc.robot.Subsystems.Pivot.Pivot;
 import frc.robot.Subsystems.Shooter.Shooter;
 import frc.robot.Subsystems.Vision.Vision;
 
-import java.util.function.BooleanSupplier;
 
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -79,6 +78,11 @@ public class Robot extends LoggedRobot {
 
     // Driver Controls
 
+    //drive
+    drivetrain.setDefaultCommand(
+      Commands.run(() -> drivetrain.drive(driver.getRightX(), driver.getLeftY(), true))
+    );
+    
     // Shooting at speaker sequence
     driver.rightTrigger().whileTrue(
       Commands.sequence(
@@ -86,40 +90,45 @@ public class Robot extends LoggedRobot {
           shooter.changeSetpoint(ShooterConstants.kSpeaker),
           pivot.aimWithVision(vision::getVisionFrame),
           drivetrain.speakerAlign(vision::getVisionFrame)).raceWith(
-            Commands.waitUntil(
-              (BooleanSupplier) Commands.parallel(
+            Commands.parallel(
                 Commands.waitUntil(shooter::atSetpoint),
                 Commands.waitUntil(pivot::atSetpoint),
                 Commands.waitUntil(drivetrain::isAligned)
                 )
-          )
         ),
         Commands.sequence(
           shooter.changeKickerSetPoint(1),
           Commands.waitUntil(() -> !shooter.noteDetected()),
           Commands.waitSeconds(0.3),
           Commands.parallel(
-            shooter.changeKickerSetPoint(-0.8),
+            shooter.changeKickerSetPoint(0),
             shooter.changeSetpoint(ShooterConstants.kIdle),
             pivot.changeSetpoint(PivotConstants.minimumPosition)
-          ).raceWith(Commands.waitUntil(
-              (BooleanSupplier) Commands.parallel(
+          ).raceWith(Commands.parallel(
                 Commands.waitUntil(shooter::atSetpoint),
                 Commands.waitUntil(pivot::atSetpoint)
-                ))),
-            Commands.waitSeconds(0.1),
-            shooter.changeKickerSetPoint(0)
+                ))
         ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming)));
 
     driver.rightTrigger().onFalse(Commands.runOnce(() -> {
-        shooter.changeKickerSetPoint(0);
         shooter.changeSetpoint(ShooterConstants.kIdle);
         pivot.changeSetpoint(PivotConstants.minimumPosition);
     }));
 
+    //intake
+    driver.leftTrigger().onTrue(Commands.parallel(
+      shooter.changeSetpoint(ShooterConstants.kIntake),
+      shooter.changeKickerSetPoint(-1)
+    )); 
+      //do we want this to also aim the pivot?
+
+    driver.leftTrigger().onFalse(Commands.sequence(
+      shooter.changeSetpoint(ShooterConstants.kIdle).raceWith(Commands.waitSeconds(0.6)),
+      shooter.changeKickerSetPoint(0)
+    ));
     
 
-    driver.leftTrigger().whileTrue(drivetrain.speakerAlign(vision::getVisionFrame));
+    driver.a().whileTrue(drivetrain.speakerAlign(vision::getVisionFrame));
 
     operator.a().onTrue(pivot.changeSetpoint(0));
 
