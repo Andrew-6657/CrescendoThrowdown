@@ -102,7 +102,7 @@ public class Robot extends LoggedRobot {
           Commands.waitSeconds(0.3),
           Commands.parallel(
             shooter.changeKickerSetPoint(0),
-            shooter.changeSetpoint(ShooterConstants.kIdle),
+            shooter.changeSetpoint(ShooterConstants.kStop),
             pivot.changeSetpoint(PivotConstants.minimumPosition)
           ).raceWith(Commands.parallel(
                 Commands.waitUntil(shooter::atSetpoint),
@@ -130,12 +130,34 @@ public class Robot extends LoggedRobot {
 
     driver.a().whileTrue(drivetrain.speakerAlign(vision::getVisionFrame));
 
+
+    // Operator Controls
     operator.a().onTrue(pivot.changeSetpoint(0));
 
     operator.povDown().onTrue(pivot.incrementSetpoint(-0.3));
     operator.povUp().onTrue(pivot.incrementSetpoint(0.3));
 
     operator.b().onTrue(shooter.changeSetpoint(ShooterConstants.kStop));
+
+    //spit sequence
+    operator.rightTrigger().whileTrue(Commands.sequence(
+        shooter.changeSetpoint(ShooterConstants.kSpit).raceWith(
+          Commands.parallel(
+            Commands.waitUntil(shooter::atSetpoint),
+            Commands.waitUntil(pivot::atSetpoint) // should we change the pivot angle for spiting?
+          )),
+          shooter.changeKickerSetPoint(1),
+          Commands.waitUntil(() -> !shooter.noteDetected()),
+          Commands.waitSeconds(0.3),
+          Commands.parallel(
+            shooter.changeKickerSetPoint(0),
+            shooter.changeSetpoint(ShooterConstants.kStop),
+            pivot.changeSetpoint(PivotConstants.minimumPosition)
+          ).raceWith(Commands.parallel(
+                Commands.waitUntil(shooter::atSetpoint),
+                Commands.waitUntil(pivot::atSetpoint)
+                ))
+    ));
   }
 
   @Override
