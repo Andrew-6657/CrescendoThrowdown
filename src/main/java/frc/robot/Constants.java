@@ -78,7 +78,7 @@ public class Constants {
     // Flywheel Setpoints
     public static final FlywheelSetPoint kSpeaker = new FlywheelSetPoint(4000, 8000);
     public static final FlywheelSetPoint kIntake = new FlywheelSetPoint(-2000, -2000);
-    public static final FlywheelSetPoint kIdle = new FlywheelSetPoint(-20, -20);
+    public static final FlywheelSetPoint kIdle = new FlywheelSetPoint(-750, -1500);
     public static final FlywheelSetPoint kStop = new FlywheelSetPoint(0, 0);
     public static final FlywheelSetPoint kSpit = new FlywheelSetPoint(600, 900);
 
