@@ -120,7 +120,7 @@ public class Robot extends LoggedRobot {
       shooter.changeSetpoint(ShooterConstants.kIntake),
       shooter.changeKickerSetPoint(-1)
     )); 
-      //do we want this to also aim the pivot?
+      //do we want this to also aim the pivot? or should the operator do that?
 
     driver.leftTrigger().onFalse(Commands.sequence(
       shooter.changeSetpoint(ShooterConstants.kIdle).raceWith(Commands.waitSeconds(0.6)),
@@ -158,6 +158,9 @@ public class Robot extends LoggedRobot {
                 Commands.waitUntil(pivot::atSetpoint)
                 ))
     ));
+
+
+    
   }
 
   @Override

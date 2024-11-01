@@ -29,7 +29,7 @@ public class Pivot extends SubsystemBase {
   private DutyCycleEncoder pivotEncoder = new DutyCycleEncoder(0);
   private PIDController anglePID = new PIDController(0, 0, 0); // TODO: Tune
 
-  private double setPoint = 0;
+  private double setPoint = 0; // degrees I think
   private InterpolatingDoubleTreeMap pivotMap;
 
   public Pivot() {
