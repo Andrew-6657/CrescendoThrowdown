@@ -7,6 +7,7 @@ package frc.robot;
 import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -19,6 +20,7 @@ import frc.robot.Subsystems.Vision.Vision;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
@@ -45,6 +47,60 @@ public class Robot extends LoggedRobot {
   }
 
   public static final RobotMode mode = Robot.isReal() ? RobotMode.REAL : RobotMode.SIM;
+
+  // Auto Command
+  private final LoggedDashboardChooser<Command> autoChooser =
+      new LoggedDashboardChooser<>("Auto Chooser");
+
+  public Command shootingSequence() {
+    return Commands.sequence(
+        Commands.parallel(
+                shooter.changeSetpoint(ShooterConstants.kSpeaker),
+                pivot.aimWithVision(vision::getVisionFrame),
+                drivetrain.speakerAlign(vision::getVisionFrame))
+            .raceWith(
+                Commands.parallel(
+                    Commands.waitUntil(shooter::atSetpoint),
+                    Commands.waitUntil(pivot::atSetpoint),
+                    Commands.waitUntil(drivetrain::isAligned))),
+        Commands.sequence(
+                shooter.changeKickerSetPoint(1),
+                Commands.waitUntil(() -> !shooter.noteDetected()),
+                Commands.waitSeconds(0.3),
+                Commands.parallel(
+                        shooter.changeKickerSetPoint(0),
+                        shooter.changeSetpoint(ShooterConstants.kIdle),
+                        pivot.changeSetpoint(PivotConstants.minimumPosition))
+                    .raceWith(
+                        Commands.parallel(
+                            Commands.waitUntil(shooter::atSetpoint),
+                            Commands.waitUntil(pivot::atSetpoint))))
+            .withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+  }
+
+  public Command spitSequence() {
+    return Commands.sequence(
+        Commands.parallel(
+                shooter.changeSetpoint(ShooterConstants.kSpit),
+                pivot.changeSetpoint(
+                    PivotConstants.minimumPosition
+                        + 5)) // the number of degrees pivot raises from minimum position
+            .raceWith(
+                Commands.parallel(
+                    Commands.waitUntil(shooter::atSetpoint),
+                    Commands.waitUntil(pivot::atSetpoint))),
+        shooter.changeKickerSetPoint(1),
+        Commands.waitUntil(() -> !shooter.noteDetected()),
+        Commands.waitSeconds(0.3),
+        Commands.parallel(
+                shooter.changeKickerSetPoint(0),
+                shooter.changeSetpoint(ShooterConstants.kIdle),
+                pivot.changeSetpoint(PivotConstants.minimumPosition))
+            .raceWith(
+                Commands.parallel(
+                    Commands.waitUntil(shooter::atSetpoint),
+                    Commands.waitUntil(pivot::atSetpoint))));
+  }
 
   @Override
   public void robotInit() {
@@ -74,39 +130,28 @@ public class Robot extends LoggedRobot {
 
     Logger.start();
 
+    // Autos
+    autoChooser.addDefaultOption("None", null);
+    autoChooser.addOption("ShootPreload", shootingSequence());
+    autoChooser.addOption(
+        "Shoot-Taxi",
+        Commands.sequence(
+            shootingSequence(),
+            Commands.run(() -> drivetrain.drive(0, 0.2, false)).raceWith(Commands.waitSeconds(5))));
+    autoChooser.addOption(
+        "TaxiOnly",
+        Commands.run(() -> drivetrain.drive(0, 0.2, false)).raceWith(Commands.waitSeconds(5)));
+    autoChooser.addOption("SpitOnly", spitSequence());
+
     // Driver Controls
 
     // drive
     drivetrain.setDefaultCommand(
-        Commands.run(() -> drivetrain.drive(driver.getRightX(), driver.getLeftY(), true)));
+        // Commands.run(() -> drivetrain.drive(driver.getRightX(), driver.getLeftY(), true))
+        Commands.run(() -> drivetrain.drive(0, 0, true)));
 
     // Shooting at speaker sequence
-    driver
-        .rightTrigger()
-        .whileTrue(
-            Commands.sequence(
-                Commands.parallel(
-                        shooter.changeSetpoint(ShooterConstants.kSpeaker),
-                        pivot.aimWithVision(vision::getVisionFrame),
-                        drivetrain.speakerAlign(vision::getVisionFrame))
-                    .raceWith(
-                        Commands.parallel(
-                            Commands.waitUntil(shooter::atSetpoint),
-                            Commands.waitUntil(pivot::atSetpoint),
-                            Commands.waitUntil(drivetrain::isAligned))),
-                Commands.sequence(
-                        shooter.changeKickerSetPoint(1),
-                        Commands.waitUntil(() -> !shooter.noteDetected()),
-                        Commands.waitSeconds(0.3),
-                        Commands.parallel(
-                                shooter.changeKickerSetPoint(0),
-                                shooter.changeSetpoint(ShooterConstants.kStop),
-                                pivot.changeSetpoint(PivotConstants.minimumPosition))
-                            .raceWith(
-                                Commands.parallel(
-                                    Commands.waitUntil(shooter::atSetpoint),
-                                    Commands.waitUntil(pivot::atSetpoint))))
-                    .withInterruptBehavior(InterruptionBehavior.kCancelIncoming)));
+    driver.rightTrigger().whileTrue(shootingSequence());
 
     driver
         .rightTrigger()
@@ -120,12 +165,13 @@ public class Robot extends LoggedRobot {
     // intake
     driver
         .leftTrigger()
-        .onTrue(Commands.sequence(
-            Commands.parallel(
-                shooter.changeSetpoint(ShooterConstants.kIntake),
-                shooter.changeKickerSetPoint(-1),
-                pivot.changeSetpoint(PivotConstants.maximumPosition)
-                ).raceWith(Commands.waitUntil(shooter::noteDetected)),
+        .onTrue(
+            Commands.sequence(
+                Commands.parallel(
+                        shooter.changeSetpoint(ShooterConstants.kIntake),
+                        shooter.changeKickerSetPoint(-1),
+                        pivot.changeSetpoint(PivotConstants.maximumPosition))
+                    .raceWith(Commands.waitUntil(shooter::noteDetected)),
                 Commands.waitSeconds(0.1),
                 pivot.changeSetpoint(PivotConstants.minimumPosition)));
 
@@ -148,29 +194,7 @@ public class Robot extends LoggedRobot {
     operator.b().onTrue(shooter.changeSetpoint(ShooterConstants.kStop));
 
     // spit sequence
-    operator
-        .rightTrigger()
-        .whileTrue(
-            Commands.sequence(
-                shooter
-                    .changeSetpoint(ShooterConstants.kSpit)
-                    .raceWith(
-                        Commands.parallel(
-                            Commands.waitUntil(shooter::atSetpoint),
-                            Commands.waitUntil(
-                                pivot::atSetpoint) // should we change the pivot angle for spiting?
-                            )),
-                shooter.changeKickerSetPoint(1),
-                Commands.waitUntil(() -> !shooter.noteDetected()),
-                Commands.waitSeconds(0.3),
-                Commands.parallel(
-                        shooter.changeKickerSetPoint(0),
-                        shooter.changeSetpoint(ShooterConstants.kIdle),
-                        pivot.changeSetpoint(PivotConstants.minimumPosition))
-                    .raceWith(
-                        Commands.parallel(
-                            Commands.waitUntil(shooter::atSetpoint),
-                            Commands.waitUntil(pivot::atSetpoint)))));
+    operator.rightTrigger().whileTrue(spitSequence());
   }
 
   @Override

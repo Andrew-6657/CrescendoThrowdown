@@ -111,17 +111,17 @@ public class ShooterIO_Real implements ShooterIO {
             setpoint.rightRPM,
             rightFlywheel.getVelocity().getValueAsDouble() * 60,
             ShooterConstants.RightFlywheels.rpmTolerance);
+    /*
+        leftFlywheel.setControl(
+            leftVV
+                .withVelocity(setpoint.leftRPM / 60)
+                .withSlot(0)); // RPM to Native Rotations per second
 
-    leftFlywheel.setControl(
-        leftVV
-            .withVelocity(setpoint.leftRPM / 60)
-            .withSlot(0)); // RPM to Native Rotations per second
-
-    rightFlywheel.setControl(
-        rightVV
-            .withVelocity(setpoint.rightRPM / 60)
-            .withSlot(0)); // RPM to Native Rotations per second
-
+        rightFlywheel.setControl(
+            rightVV
+                .withVelocity(setpoint.rightRPM / 60)
+                .withSlot(0)); // RPM to Native Rotations per second
+    */
     inputs.tofDistance = Units.metersToInches(sensor.getMeasurement().distance_mm * 0.001);
 
     inputs.kickerSetPoint = kickerSetPoint;

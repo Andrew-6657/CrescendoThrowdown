@@ -129,11 +129,12 @@ public class Pivot extends SubsystemBase {
     // Runs the Pivot PID
     double output = anglePID.calculate(getAngle(), setPoint);
 
+    /*
     if (atSetpoint() && setPoint == 0) {
       rightMotor.setVoltage(0);
     } else {
       rightMotor.setVoltage(output);
-    }
+    } */
 
     // Logging
     Logger.recordOutput("Pivot/Output", output);
