@@ -120,19 +120,22 @@ public class Robot extends LoggedRobot {
     // intake
     driver
         .leftTrigger()
-        .onTrue(
+        .onTrue(Commands.sequence(
             Commands.parallel(
                 shooter.changeSetpoint(ShooterConstants.kIntake),
                 shooter.changeKickerSetPoint(-1),
-                pivot.changeSetpoint(PivotConstants.maximumPosition)));
-    // do we want this to also aim the pivot? or should the operator do that?
+                pivot.changeSetpoint(PivotConstants.maximumPosition)
+                ).raceWith(Commands.waitUntil(shooter::noteDetected)),
+                Commands.waitSeconds(0.1),
+                pivot.changeSetpoint(PivotConstants.minimumPosition)));
 
     driver
         .leftTrigger()
         .onFalse(
             Commands.sequence(
                 shooter.changeSetpoint(ShooterConstants.kIdle).raceWith(Commands.waitSeconds(0.6)),
-                shooter.changeKickerSetPoint(0)));
+                shooter.changeKickerSetPoint(-0.25),
+                pivot.changeSetpoint(PivotConstants.minimumPosition)));
 
     driver.a().whileTrue(drivetrain.speakerAlign(vision::getVisionFrame));
 
