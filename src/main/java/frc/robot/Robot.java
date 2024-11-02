@@ -123,7 +123,8 @@ public class Robot extends LoggedRobot {
         .onTrue(
             Commands.parallel(
                 shooter.changeSetpoint(ShooterConstants.kIntake),
-                shooter.changeKickerSetPoint(-1)));
+                shooter.changeKickerSetPoint(-1),
+                pivot.changeSetpoint(PivotConstants.maximumPosition)));
     // do we want this to also aim the pivot? or should the operator do that?
 
     driver
