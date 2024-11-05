@@ -17,8 +17,6 @@ import frc.robot.Subsystems.Drivetrain.Drivetrain;
 import frc.robot.Subsystems.Pivot.Pivot;
 import frc.robot.Subsystems.Shooter.Shooter;
 import frc.robot.Subsystems.Vision.Vision;
-
-import org.ejml.equation.Sequence;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -104,7 +102,7 @@ public class Robot extends LoggedRobot {
                     Commands.waitUntil(pivot::atSetpoint))));
   }
 
-  public Command taxi(){
+  public Command taxi() {
     return Commands.run(() -> drivetrain.drive(0, 0.2, false)).raceWith(Commands.waitSeconds(5));
   }
 
@@ -139,18 +137,10 @@ public class Robot extends LoggedRobot {
     // Autos
     autoChooser.addDefaultOption("None", null);
     autoChooser.addOption("ShootPreload", shootingSequence());
-    autoChooser.addOption(
-        "Shoot-Taxi",
-        Commands.sequence(
-            shootingSequence(),
-            taxi()));
-    autoChooser.addOption(
-        "TaxiOnly", taxi());
+    autoChooser.addOption("Shoot-Taxi", Commands.sequence(shootingSequence(), taxi()));
+    autoChooser.addOption("TaxiOnly", taxi());
     autoChooser.addOption("SpitOnly", spitSequence());
-    autoChooser.addOption("Taxi-Spit", Commands.sequence(
-        taxi(),
-        spitSequence()
-    ));
+    autoChooser.addOption("Taxi-Spit", Commands.sequence(taxi(), spitSequence()));
 
     // Driver Controls
 
