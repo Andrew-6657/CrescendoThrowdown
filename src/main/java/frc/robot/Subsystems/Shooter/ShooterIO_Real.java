@@ -2,11 +2,11 @@ package frc.robot.Subsystems.Shooter;
 
 import au.grapplerobotics.LaserCan;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
@@ -23,7 +23,7 @@ public class ShooterIO_Real implements ShooterIO {
   private TalonFX rightFlywheel = new TalonFX(CANID.kRightFlywheel);
   private TalonFX leftFlywheel = new TalonFX(CANID.kLeftFlywheel);
 
-  private WPI_TalonSRX kicker = new WPI_TalonSRX(CANID.kKicker);
+  private WPI_VictorSPX kicker = new WPI_VictorSPX(CANID.kKicker);
   private double kickerSetPoint = 0.0;
 
   private FlywheelSetPoint setpoint = new FlywheelSetPoint(0, 0);
@@ -42,6 +42,7 @@ public class ShooterIO_Real implements ShooterIO {
     rightFlywheelConfig.CurrentLimits =
         ShooterConstants.RightFlywheels.kCurrentConfigs; // Current Limits
     rightFlywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    rightFlywheelConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     rightFlywheelConfigurator.apply(rightFlywheelConfig);
 
     var leftFlywheelConfigurator = leftFlywheel.getConfigurator();
@@ -57,9 +58,10 @@ public class ShooterIO_Real implements ShooterIO {
     // Configure the kicker motor
     kicker.configFactoryDefault();
     kicker.setNeutralMode(NeutralMode.Brake);
-    kicker.configSupplyCurrentLimit(
-        new SupplyCurrentLimitConfiguration(
-            true, ShooterConstants.Kicker.kCurrentLimit, ShooterConstants.Kicker.kCurrentLimit, 0));
+    // kicker.configSupplyCurrentLimit(
+    //     new SupplyCurrentLimitConfiguration(
+    //         true, ShooterConstants.Kicker.kCurrentLimit, ShooterConstants.Kicker.kCurrentLimit,
+    // 0));
   }
 
   @Override
@@ -111,22 +113,26 @@ public class ShooterIO_Real implements ShooterIO {
             setpoint.rightRPM,
             rightFlywheel.getVelocity().getValueAsDouble() * 60,
             ShooterConstants.RightFlywheels.rpmTolerance);
-    /*
-        leftFlywheel.setControl(
-            leftVV
-                .withVelocity(setpoint.leftRPM / 60)
-                .withSlot(0)); // RPM to Native Rotations per second
 
-        rightFlywheel.setControl(
-            rightVV
-                .withVelocity(setpoint.rightRPM / 60)
-                .withSlot(0)); // RPM to Native Rotations per second
-    */
-    inputs.tofDistance = Units.metersToInches(sensor.getMeasurement().distance_mm * 0.001);
+    leftFlywheel.setControl(
+        leftVV
+            .withVelocity(setpoint.leftRPM / 60)
+            .withSlot(0)); // RPM to Native Rotations per second
+
+    rightFlywheel.setControl(
+        rightVV
+            .withVelocity(setpoint.rightRPM / 60)
+            .withSlot(0)); // RPM to Native Rotations per second
+
+    try {
+      inputs.tofDistance = Units.metersToInches(sensor.getMeasurement().distance_mm * 0.001);
+    } catch (Exception e) {
+      inputs.tofDistance = 0;
+    }
 
     inputs.kickerSetPoint = kickerSetPoint;
 
     kicker.set(kickerSetPoint);
-    inputs.kickerCurrent = kicker.getSupplyCurrent();
+    inputs.kickerCurrent = 0;
   }
 }

@@ -52,9 +52,9 @@ public class Constants {
     public static final double minimumPosition = 0;
     public static final double maximumPosition = 104;
 
-    public static final double positionTolerance = 0; // TODO: Tune
+    public static final double positionTolerance = 5; // TODO: Tune
 
-    public static final double encoderOffset = 0; // TODO: Tune
+    public static final double encoderOffset = 0.774; // TODO: Tune
   }
 
   public static class ShooterConstants {
@@ -76,7 +76,7 @@ public class Constants {
     }
 
     // Flywheel Setpoints
-    public static final FlywheelSetPoint kSpeaker = new FlywheelSetPoint(4000, 8000);
+    public static final FlywheelSetPoint kSpeaker = new FlywheelSetPoint(2000, 4000);
     public static final FlywheelSetPoint kIntake = new FlywheelSetPoint(-3000, -3000);
     public static final FlywheelSetPoint kIdle = new FlywheelSetPoint(-750, -1500);
     public static final FlywheelSetPoint kStop = new FlywheelSetPoint(0, 0);
@@ -88,7 +88,7 @@ public class Constants {
 
       public static final double kCurrentLimit = 40;
 
-      public static final double rpmTolerance = 2.0; // TODO Tune
+      public static final double rpmTolerance = 2000.0; // TODO Tune
 
       public static final CurrentLimitsConfigs kCurrentConfigs =
           new CurrentLimitsConfigs()
@@ -115,7 +115,7 @@ public class Constants {
 
       public static final double kCurrentLimit = 40;
 
-      public static final double rpmTolerance = 2.0; // rmp
+      public static final double rpmTolerance = 2000.0; // rmp
 
       public static final CurrentLimitsConfigs kCurrentConfigs =
           new CurrentLimitsConfigs()

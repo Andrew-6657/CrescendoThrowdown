@@ -7,6 +7,7 @@ package frc.robot.Subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants.FlywheelSetPoint;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
@@ -30,8 +31,9 @@ public class Shooter extends SubsystemBase {
     return shooterInputs.leftAtSetPoint && shooterInputs.rightAtSetPoint;
   }
 
+  @AutoLogOutput(key = "Shooter/NoteDetected")
   public boolean noteDetected() {
-    return (shooterInputs.tofDistance < 5); // in inches, need to measure outake
+    return (shooterInputs.tofDistance < 1);
   }
 
   @Override

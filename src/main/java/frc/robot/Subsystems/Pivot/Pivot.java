@@ -27,10 +27,10 @@ public class Pivot extends SubsystemBase {
   private WPI_TalonSRX rightMotor = new WPI_TalonSRX(CANID.kPivotR);
 
   private DutyCycleEncoder pivotEncoder = new DutyCycleEncoder(0);
-  private PIDController anglePID = new PIDController(0, 0, 0); // TODO: Tune
+  private PIDController anglePID = new PIDController(12d / 80, 0, 0); // TODO: Tune
 
   private double setPoint = 0; // degrees I think
-  private InterpolatingDoubleTreeMap pivotMap;
+  private InterpolatingDoubleTreeMap pivotMap = new InterpolatingDoubleTreeMap();
 
   public Pivot() {
 
@@ -50,7 +50,7 @@ public class Pivot extends SubsystemBase {
     leftMotor.follow(rightMotor);
 
     leftMotor.setInverted(InvertType.OpposeMaster);
-    rightMotor.setInverted(InvertType.InvertMotorOutput);
+    rightMotor.setInverted(InvertType.None);
 
     pivotEncoder.setPositionOffset(PivotConstants.encoderOffset);
 
@@ -114,7 +114,7 @@ public class Pivot extends SubsystemBase {
    * @return Current angle reported by the pivot encoder.
    */
   public double getAngle() {
-    return pivotEncoder.getAbsolutePosition() - pivotEncoder.getPositionOffset();
+    return -(pivotEncoder.getAbsolutePosition() - pivotEncoder.getPositionOffset()) * 360;
   }
 
   /**
@@ -129,12 +129,11 @@ public class Pivot extends SubsystemBase {
     // Runs the Pivot PID
     double output = anglePID.calculate(getAngle(), setPoint);
 
-    /*
     if (atSetpoint() && setPoint == 0) {
       rightMotor.setVoltage(0);
     } else {
       rightMotor.setVoltage(output);
-    } */
+    }
 
     // Logging
     Logger.recordOutput("Pivot/Output", output);
